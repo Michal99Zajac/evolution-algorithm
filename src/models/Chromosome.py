@@ -1,6 +1,5 @@
 from __future__ import annotations
 from math import ceil, log2
-from msilib.schema import Error
 import random
 from typing import List
 
@@ -17,14 +16,22 @@ class Chromosome:
         return ''.join(map(lambda gen: '1' if gen else '0', self._gens))
 
     def inverse(self, left: int, right: int):
-        if (left < 0 or right > len(self._gens)):
-            raise Exception("Exception: left or right is out of range")
+        if left < 0 or right > len(self._gens):
+            raise Exception("Error: left or right is out of range")
 
         inversed_subgens = reversed(self._gens[left:right])
         self._gens[left:right] = inversed_subgens
 
     def cross(self, partner: Chromosome, position: int):
-        pass
+        if position < 0 or position > len(self._gens):
+            raise Exception("Error: position is out of range")
+
+        if len(partner) != len(self._gens):
+            raise Exception("Error: chromosomes lengths are not equal")
+
+        my_gens = self._gens[0:position]
+        partner_gens = partner.gens[position:len(self._gens)]
+        return Chromosome(my_gens + partner_gens)
 
     @property
     def gens(self):
