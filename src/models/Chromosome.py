@@ -15,6 +15,10 @@ class Chromosome:
     def __str__(self):
         return ''.join(map(lambda gen: '1' if gen else '0', self._gens))
 
+    def mutate(self, *args):
+        for index in args:
+            self._gens[index] = not self._gens[index]
+
     def inverse(self, left: int, right: int):
         if left < 0 or right > len(self._gens):
             raise Exception("Error: left or right is out of range")

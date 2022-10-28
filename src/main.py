@@ -1,9 +1,7 @@
-from fitness import schaffer_N4
 from models.Chromosome import Chromosome
 import processes.crossing as cross
 
 if __name__ == "__main__":
-    result = schaffer_N4(0, 1.25313)
     chromosome_lenght = Chromosome.chromosome_lenght(6, -10, 10)
     chromosome_a = Chromosome.generate(chromosome_lenght)
     chromosome_b = Chromosome.generate(chromosome_lenght)
