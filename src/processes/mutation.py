@@ -29,4 +29,5 @@ class Mutation(ABC):
 class EdgeMutation(Mutation):
     @Mutation.checker
     def mutate(self, chromosome: Chromosome):
-        chromosome.mutate(len(chromosome) - 1)
+        index = 0 if random.random() < 0.5 else len(chromosome) - 1
+        chromosome.mutate(index)
