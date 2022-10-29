@@ -31,3 +31,11 @@ class EdgeMutation(Mutation):
     def mutate(self, chromosome: Chromosome):
         index = 0 if random.random() < 0.5 else len(chromosome) - 1
         chromosome.mutate(index)
+        return chromosome
+
+class SinglePointMutation(Mutation):
+    @Mutation.checker
+    def mutate(self, chromosome: Chromosome):
+        index = random.randint(0, len(chromosome) - 1)
+        chromosome.mutate(index)
+        return chromosome
