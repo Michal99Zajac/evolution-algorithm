@@ -39,3 +39,11 @@ class SinglePointMutation(Mutation):
         index = random.randint(0, len(chromosome) - 1)
         chromosome.mutate(index)
         return chromosome
+
+class TwoPointMutation(Mutation):
+    @Mutation.checker
+    def mutate(self, chromosome: Chromosome):
+        point1 = random.randint(0, len(chromosome) - 1)
+        point2 = random.randint(point1, len(chromosome) - 1)
+        chromosome.mutate(point1, point2)
+        return chromosome
