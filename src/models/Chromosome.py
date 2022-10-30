@@ -3,7 +3,7 @@ from math import ceil, log2
 import random
 from typing import List
 
-class Chromosome:
+class BinaryChromosome:
     _gens: List[bool] = []
 
     def __init__(self, gens: List[bool]):
@@ -37,7 +37,7 @@ class Chromosome:
     @staticmethod
     def generate(lenght: int):
         gens = [bool(random.getrandbits(1)) for _ in range(lenght)]
-        return Chromosome(gens)
+        return BinaryChromosome(gens)
 
     @staticmethod
     def chromosome_lenght(precision: int, left_border: float, right_border: float):
