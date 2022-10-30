@@ -15,7 +15,7 @@ class BinaryChromosome:
     def __str__(self):
         return ''.join(map(lambda gen: '1' if gen else '0', self._gens))
 
-    def mutate(self, *args):
+    def mutate(self, *args: int):
         for index in args:
             self._gens[index] = not self._gens[index]
 

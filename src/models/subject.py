@@ -1,6 +1,5 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from ast import arg
 
 from models.chromosome import BinaryChromosome
 
@@ -20,7 +19,7 @@ class Subject(ABC):
     def mutate(self):
         pass
 
-class TwoVariablesSubject(Subject):
+class X2FunctionSubject(Subject):
     def __init__(self, *args: BinaryChromosome):
         if len(args) != 2:
             raise Exception("Error: constructor didn't get two chromosmes")
@@ -29,3 +28,7 @@ class TwoVariablesSubject(Subject):
     def inverse(self, left: int, right: int):
         for chromosome in self.chromosomes:
             chromosome.inverse(left=left, right=right)
+
+    def mutate(self, *args: int):
+        for chromosome in self.chromosomes:
+            chromosome.mutate(args)
