@@ -5,6 +5,11 @@ from models.chromosome import BinaryChromosome
 
 class Subject(ABC):
     def  __init__(self,  *args: BinaryChromosome):
+        length = len(list(args)[0])
+        for chromosome in args:
+            if length != len(chromosome): raise Exception("Error: chromosomes are not equal")
+
+        self.__length = length
         self.__chromosomes = list(args)
 
     @property
