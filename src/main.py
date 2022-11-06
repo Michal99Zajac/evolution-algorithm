@@ -4,11 +4,11 @@ import processes.crossover as crossover
 from processes.mutation import EdgeMutation
 from adapters import X2SubjectAdapter
 from fitness.schaffer_N4 import schaffer_N4
-from processes.selection import TheBestSelection
+from processes.selection import TournamentSelection
 
 if __name__ == "__main__":
     chromosome_lenght = BinaryChromosome.chromosome_lenght(6, -10, 10)
-    selection = TheBestSelection(0.33)
+    selection = TournamentSelection(5, 3)
     subjects = [X2SubjectAdapter(
         [BinaryChromosome.generate(chromosome_lenght), BinaryChromosome.generate(chromosome_lenght)],
         length=chromosome_lenght,
