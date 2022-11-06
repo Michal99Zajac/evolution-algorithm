@@ -6,8 +6,6 @@ import random
 
 from adapters import X2SubjectAdapter
 
-helper = lambda x: list(map(lambda subject: subject.value , x))
-
 class BinarySelection(ABC):
     _type: str = 'min'
 
@@ -100,7 +98,8 @@ class RoulettaSelection(BinarySelection):
     def __make_distributanta(self, subjects: List[X2SubjectAdapter]):
         totaliser: Callable[[X2SubjectAdapter], float] = lambda subject: subject.value if self._type == "max" else 1 / subject.value
         total = sum(map(totaliser, subjects))
-        fractions = list(map(lambda subject: (subject.value if self._type == "max" else 1 / subject.value) / total, subjects))
+        fractioner: Callable[[X2SubjectAdapter], float] = lambda subject: (subject.value if self._type == "max" else 1 / subject.value) / total
+        fractions = list(map(fractioner, subjects))
         distributanta = [sum(fractions[0:index]) for index in range(len(fractions))]
         return list(zip(distributanta, subjects))
 
