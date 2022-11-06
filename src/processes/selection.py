@@ -98,7 +98,8 @@ class RoulettaSelection(BinarySelection):
         return selected
 
     def __make_distributanta(self, subjects: List[X2SubjectAdapter]):
-        total = sum(map(lambda subject: subject.value, subjects)) if self._type == "max" else sum(map(lambda subject: 1 / subject.value, subjects))
+        totaliser: Callable[[X2SubjectAdapter], float] = lambda subject: subject.value if self._type == "max" else 1 / subject.value
+        total = sum(map(totaliser, subjects))
         fractions = list(map(lambda subject: (subject.value if self._type == "max" else 1 / subject.value) / total, subjects))
         distributanta = [sum(fractions[0:index]) for index in range(len(fractions))]
         return list(zip(distributanta, subjects))
