@@ -1,11 +1,22 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
+from typing import List
 
 from models.chromosome import BinaryChromosome
 
-class Subject(ABC):
-    def  __init__(self,  *args: BinaryChromosome):
-        self.__chromosomes = list(args)
+class BinarySubject(ABC):
+    def  __init__(self, chromosomes: List[BinaryChromosome], length: int):
+        if len(chromosomes) == 0:
+            raise Exception("Error: Subject have to have at least on chromosome")
+
+        for chromosome in chromosomes:
+            if length != len(chromosome): raise Exception("Error: chromosomes are not equal")
+
+        self.__length = length
+        self.__chromosomes = list(chromosomes)
+
+    def __len__(self):
+        return self.__length
 
     @property
     def chromosomes(self):
@@ -19,11 +30,11 @@ class Subject(ABC):
     def mutate(self):
         pass
 
-class X2FunctionSubject(Subject):
-    def __init__(self, *args: BinaryChromosome):
-        if len(args) != 2:
+class X2Subject(BinarySubject):
+    def __init__(self, chromosomes: List[BinaryChromosome], length: int):
+        if len(chromosomes) != 2:
             raise Exception("Error: constructor didn't get two chromosmes")
-        super().__init__(*args)
+        super().__init__(chromosomes, length)
 
     def inverse(self, left: int, right: int):
         for chromosome in self.chromosomes:
