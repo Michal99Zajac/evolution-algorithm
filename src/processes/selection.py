@@ -1,6 +1,6 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Callable
 import math
 import random
 
@@ -37,16 +37,19 @@ class TheBestSelection(BinarySelection):
         return the_best[0:size]
 
 class TournamentSelection(BinarySelection):
-    def __init__(self, editions_number: int, group_size: int, type: str = 'min'):
+    def __init__(self, percentage: float, group_size: int, type: str = 'min'):
+        if percentage > 1 or percentage < 0:
+            raise Exception("Error: percentage should be number between 0 and 1")
         self.__group_size = group_size
-        self.__editions_number = editions_number
+        self.__percentage = percentage
         self._type = type
 
     def select(self, subjects: List[X2SubjectAdapter]):
         selected: List[X2SubjectAdapter] = []
         __subjects = subjects.copy()
+        editions = math.floor(len(subjects) * self.__percentage)
 
-        for _ in range(self.__editions_number):
+        for _ in range(editions):
             # draw and selection
             draw = self.__draw(__subjects)
             sorted_draw = self._sort(draw)
@@ -75,3 +78,39 @@ class TournamentSelection(BinarySelection):
             index = (index + 1) % len(subjects)
 
         return selected
+
+class RoulettaSelection(BinarySelection):
+    def __init__(self, percentage: float, type: str = 'min'):
+        if percentage > 1 or percentage < 0:
+            raise Exception("Error: percentage should be number between 0 and 1")
+        self.__percentage = percentage
+        self._type = type
+
+    def select(self, subjects: List[X2SubjectAdapter]):
+        __subjects__ = subjects.copy()
+        selected: List[X2SubjectAdapter] = []
+
+        for _ in range(math.floor(len(subjects) * self.__percentage)):
+            distributanta = self.__make_distributanta(__subjects__)
+            index = self.__twist(distributanta)
+            selected.append(__subjects__.pop(index))
+
+        return selected
+
+    def __make_distributanta(self, subjects: List[X2SubjectAdapter]):
+        total = sum(map(lambda subject: subject.value, subjects)) if self._type == "max" else sum(map(lambda subject: 1 / subject.value, subjects))
+        fractions = list(map(lambda subject: (subject.value if self._type == "max" else 1 / subject.value) / total, subjects))
+        distributanta = [sum(fractions[0:index]) for index in range(len(fractions))]
+        return list(zip(distributanta, subjects))
+
+    def __twist(self, distributanta: List[tuple[float | int, X2SubjectAdapter]]):
+        chance = random.random()
+        index = 0
+        is_found = False
+        while not is_found:
+            if chance < distributanta[index][0] or index == len(distributanta) - 1:
+                is_found = True
+            else:
+                index += 1
+
+        return index
