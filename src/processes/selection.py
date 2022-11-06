@@ -9,31 +9,38 @@ from adapters import X2SubjectAdapter
 helper = lambda x: list(map(lambda subject: subject.value , x))
 
 class BinarySelection(ABC):
+    _type: str = 'min'
+
     @abstractmethod
     def select(self, subjects: List[X2SubjectAdapter]):
         pass
 
-    def __sorter(self, subject: X2SubjectAdapter):
+    def __min_sorter(self, subject: X2SubjectAdapter):
         return subject.value
 
+    def __max_sorter(self, subject: X2SubjectAdapter):
+        return -subject.value
+
     def _sort(self, subjects: List[X2SubjectAdapter]):
-        return sorted(subjects, key=self.__sorter)
+        return sorted(subjects, key=self.__max_sorter if self._type == 'max' else self.__min_sorter)
 
 class TheBestSelection(BinarySelection):
-    def __init__(self, percentage: float):
+    def __init__(self, percentage: float, type: str = 'min'):
         if percentage > 1 or percentage < 0:
             raise Exception("Error: percentage should be number between 0 and 1")
         self.__percentage = percentage
+        self._type = type
 
     def select(self, subjects: List[X2SubjectAdapter]):
-        the_best = self.__sort(subjects)
+        the_best = self._sort(subjects)
         size = math.floor(len(subjects) * self.__percentage)
         return the_best[0:size]
 
 class TournamentSelection(BinarySelection):
-    def __init__(self, editions_number: int, group_size: int):
+    def __init__(self, editions_number: int, group_size: int, type: str = 'min'):
         self.__group_size = group_size
         self.__editions_number = editions_number
+        self._type = type
 
     def select(self, subjects: List[X2SubjectAdapter]):
         selected: List[X2SubjectAdapter] = []
