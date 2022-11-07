@@ -3,6 +3,7 @@ from math import ceil, log2
 import random
 from typing import List
 
+
 class BinaryChromosome:
     _gens: List[bool] = []
 
@@ -13,7 +14,7 @@ class BinaryChromosome:
         return len(self._gens)
 
     def __str__(self):
-        return ''.join(map(lambda gen: '1' if gen else '0', self._gens))
+        return "".join(map(lambda gen: "1" if gen else "0", self._gens))
 
     def mutate(self, *args: int):
         for index in args:
@@ -41,4 +42,4 @@ class BinaryChromosome:
 
     @staticmethod
     def chromosome_lenght(precision: int, left_border: float, right_border: float):
-        return ceil(log2((right_border - left_border) * 10 ** precision) + log2(1))
+        return ceil(log2((right_border - left_border) * 10**precision) + log2(1))

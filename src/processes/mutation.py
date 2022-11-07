@@ -7,9 +7,11 @@ TMutation = TypeVar("TMutation", bound="Mutation")
 
 from models.chromosome import BinaryChromosome
 
+
 class Mutation(ABC):
     def __init__(self, probability: float):
-        if probability > 1: raise Exception('Error: probability can\'t be bigger then 100%')
+        if probability > 1:
+            raise Exception("Error: probability can't be bigger then 100%")
         self.__probability = probability
 
     def checker(function: Callable[[TMutation, BinaryChromosome], BinaryChromosome]):
@@ -25,6 +27,7 @@ class Mutation(ABC):
     def mutate(self, chromosome: BinaryChromosome):
         pass
 
+
 class EdgeMutation(Mutation):
     @Mutation.checker
     def mutate(self, chromosome: BinaryChromosome):
@@ -33,12 +36,14 @@ class EdgeMutation(Mutation):
         chromosome.mutate(index)
         return chromosome
 
+
 class SinglePointMutation(Mutation):
     @Mutation.checker
     def mutate(self, chromosome: BinaryChromosome):
         index = random.randint(0, len(chromosome) - 1)
         chromosome.mutate(index)
         return chromosome
+
 
 class TwoPointMutation(Mutation):
     @Mutation.checker

@@ -4,13 +4,15 @@ from typing import List
 
 from models.chromosome import BinaryChromosome
 
+
 class BinarySubject(ABC):
-    def  __init__(self, chromosomes: List[BinaryChromosome], length: int):
+    def __init__(self, chromosomes: List[BinaryChromosome], length: int):
         if len(chromosomes) == 0:
             raise Exception("Error: Subject have to have at least on chromosome")
 
         for chromosome in chromosomes:
-            if length != len(chromosome): raise Exception("Error: chromosomes are not equal")
+            if length != len(chromosome):
+                raise Exception("Error: chromosomes are not equal")
 
         self.__length = length
         self.__chromosomes = list(chromosomes)
@@ -29,6 +31,7 @@ class BinarySubject(ABC):
     @abstractmethod
     def mutate(self):
         pass
+
 
 class X2Subject(BinarySubject):
     def __init__(self, chromosomes: List[BinaryChromosome], length: int):
