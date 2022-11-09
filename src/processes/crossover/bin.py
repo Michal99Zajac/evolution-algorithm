@@ -1,5 +1,5 @@
 import random
-from typing import Type, NewType, List, Tuple
+from typing import Type, List, Tuple
 from models.chromosome import BinaryChromosome
 
 from models.subject import BinarySubject
