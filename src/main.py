@@ -1,7 +1,7 @@
 from models.chromosome import BinaryChromosome
 from models.subject import X2Subject
 from processes.crossover.factory import BinaryCrossoverFactory, BinaryCrossoverType
-from processes.mutation import EdgeMutation
+from processes.mutation.bin import EdgeMutation
 from adapters import X2SubjectAdapter
 from fitness.schaffer_N4 import schaffer_N4
 from processes.selection import TournamentSelection, TheBestSelection, RoulettaSelection
@@ -11,6 +11,7 @@ if __name__ == "__main__":
     selection = RoulettaSelection(0.5, type="min")
     crossoverFactory = BinaryCrossoverFactory(BinaryCrossoverType.ONE_POINT)
     crossover = crossoverFactory.create_crossover(X2Subject)
+    mutation = EdgeMutation(1)
     subjects = [
         X2SubjectAdapter(
             [
@@ -24,14 +25,7 @@ if __name__ == "__main__":
         )
         for _ in range(6)
     ]
-    print(subjects[0].chromosomes[0])
-    print(subjects[1].chromosomes[0])
-    [off1, off2] = crossover.cross(subjects[0], subjects[1])
-    print(off1.chromosomes[0])
-    print(off2.chromosomes[0])
 
-    # print(list(map(lambda subject: subject.value , subjects)))
-    # print(sum(selection.select(subjects)))
-    # selection.select(subjects)
-    # print(list(map(lambda subject: subject.value , subjects)))
-    # print(list(map(lambda subject: subject.value , selection.select(subjects))))
+    print(subjects[0].chromosomes[0])
+    mutation.mutate(subjects[0].chromosomes[0])
+    print(subjects[0].chromosomes[0])
