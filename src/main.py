@@ -1,10 +1,6 @@
 from models.chromosome import BinaryChromosome
 from models.subject import X2Subject
-from processes.crossover import (
-    HomogeneousCrossover,
-    BinaryCrossoverFactory,
-    BinaryCrossoverType,
-)
+from processes.crossover.factory import BinaryCrossoverFactory, BinaryCrossoverType
 from processes.mutation import EdgeMutation
 from adapters import X2SubjectAdapter
 from fitness.schaffer_N4 import schaffer_N4
@@ -13,9 +9,8 @@ from processes.selection import TournamentSelection, TheBestSelection, RoulettaS
 if __name__ == "__main__":
     chromosome_lenght = BinaryChromosome.chromosome_lenght(6, -10, 10)
     selection = RoulettaSelection(0.5, type="min")
-    # crossover = HomogeneousCrossover()
-    crossoverFactory = BinaryCrossoverFactory(BinaryCrossoverType.ONE_POINT, X2Subject)
-    crossover = crossoverFactory.createCrossover()
+    crossoverFactory = BinaryCrossoverFactory(BinaryCrossoverType.ONE_POINT)
+    crossover = crossoverFactory.createCrossover(X2Subject)
     subjects = [
         X2SubjectAdapter(
             [

@@ -1,19 +1,10 @@
-from __future__ import annotations
-from enum import Enum
+from ast import List
 import random
-from typing import List, Any, Type
-from abc import ABC, abstractmethod
-
+from typing import Type
 from models.chromosome import BinaryChromosome
+
 from models.subject import BinarySubject
-
-
-class BinaryCrossoverType(Enum):
-    HOMOGENEOUS = "HOMOGENEOUS"
-    ONE_POINT = "ONE_POINT"
-    TWO_POINT = "TWO_POINT"
-    THREE_POINT = "THREE_POINT"
-
+from processes.crossover.core import Crossover
 
 # def match_parents(parent1: BinaryChromosome, parent2: BinaryChromosome):
 #     if len(parent1) != len(parent2):
@@ -32,48 +23,21 @@ class BinaryCrossoverType(Enum):
 #     return offspring1, offspring2
 
 
-def two_point(parent1: BinaryChromosome, parent2: BinaryChromosome):
-    # match_parents(parent1, parent2)
-    position1 = random.randint(0, len(parent1))
-    position2 = random.randint(position1, len(parent1))
-    offspring1 = BinaryChromosome(
-        parent1.gens[0:position1]
-        + parent2.gens[position1:position2]
-        + parent1.gens[position2 : len(parent1)]
-    )
-    offspring2 = BinaryChromosome(
-        parent2.gens[0:position1]
-        + parent1.gens[position1:position2]
-        + parent2.gens[position2 : len(parent1)]
-    )
-    return offspring1, offspring2
-
-
-class CrossoverFactory(ABC):
-    @abstractmethod
-    def createCrossover(self):
-        pass
-
-
-class BinaryCrossoverFactory(CrossoverFactory):
-    def __init__(self, type: BinaryCrossoverType, SubjectCreator: Type[BinarySubject]):
-        self.SubjectCreator = SubjectCreator
-        if type == BinaryCrossoverType.HOMOGENEOUS:
-            self.CrossoverCreator = HomogeneousCrossover
-        elif type == BinaryCrossoverType.ONE_POINT:
-            self.CrossoverCreator = OnePointCrossover
-        else:
-            raise Exception("Error: type doesnt exist")
-
-    # make as generic
-    def createCrossover(self):
-        return self.CrossoverCreator(self.SubjectCreator)
-
-
-class Crossover(ABC):
-    @abstractmethod
-    def cross(self, parent_A: Any, parent_B: Any):
-        pass
+# def two_point(parent1: BinaryChromosome, parent2: BinaryChromosome):
+#     # match_parents(parent1, parent2)
+#     position1 = random.randint(0, len(parent1))
+#     position2 = random.randint(position1, len(parent1))
+#     offspring1 = BinaryChromosome(
+#         parent1.gens[0:position1]
+#         + parent2.gens[position1:position2]
+#         + parent1.gens[position2 : len(parent1)]
+#     )
+#     offspring2 = BinaryChromosome(
+#         parent2.gens[0:position1]
+#         + parent1.gens[position1:position2]
+#         + parent2.gens[position2 : len(parent1)]
+#     )
+#     return offspring1, offspring2
 
 
 class BinaryCrossover(Crossover):
@@ -93,10 +57,10 @@ class BinaryCrossover(Crossover):
             )
         )
 
-    def _unzip_gens(self, ziped_gens: List[tuple[bool]]):
+    def _unzip_gens(self, ziped_gens):
         return list(map(lambda x: list(x), list(zip(*ziped_gens))))
 
-    def _create_subject(self, chromosomes_gens: List[List[bool]]):
+    def _create_subject(self, chromosomes_gens):
         length = len(chromosomes_gens[0])
         return self.SubjectCreator(
             [BinaryChromosome(gens) for gens in chromosomes_gens], length
@@ -203,6 +167,3 @@ class ThreePointCrossover(BinaryCrossover):
             self._create_subject(unziped_offspring_A_gens),
             self._create_subject(unziped_offspring_B_gens),
         ]
-
-
-__all__ = ["one_point", "two_point", "homogeneous"]
