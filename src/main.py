@@ -10,7 +10,7 @@ if __name__ == "__main__":
     chromosome_lenght = BinaryChromosome.chromosome_lenght(6, -10, 10)
     selection = RoulettaSelection(0.5, type="min")
     crossoverFactory = BinaryCrossoverFactory(BinaryCrossoverType.ONE_POINT)
-    crossover = crossoverFactory.createCrossover(X2Subject)
+    crossover = crossoverFactory.create_crossover(X2Subject)
     subjects = [
         X2SubjectAdapter(
             [

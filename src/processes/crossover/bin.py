@@ -44,9 +44,6 @@ class BinaryCrossover(Crossover):
     def __init__(self, SubjectCreator: Type[BinarySubject]):
         self.SubjectCreator = SubjectCreator
 
-    def cross(self, parent_A: BinarySubject, parent_B: BinarySubject):
-        return super().cross(parent_A, parent_B)
-
     def _zip_gens(self, subject: BinarySubject):
         return list(
             zip(

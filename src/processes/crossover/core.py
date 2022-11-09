@@ -9,7 +9,7 @@ T = TypeVar("T", BinarySubject, any)
 
 class CrossoverFactory(ABC):
     @abstractmethod
-    def createCrossover(self, SubjectCreator: Type[T]):
+    def create_crossover(self, SubjectCreator: Type[T]):
         pass
 
 
