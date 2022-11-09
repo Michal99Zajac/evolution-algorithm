@@ -2,7 +2,12 @@ from enum import Enum
 from typing import Type
 from models.subject import BinarySubject
 
-from processes.crossover.bin import HomogeneousCrossover, OnePointCrossover
+from processes.crossover.bin import (
+    HomogeneousCrossover,
+    OnePointCrossover,
+    TwoPointCrossover,
+    ThreePointCrossover,
+)
 from processes.crossover.core import CrossoverFactory
 
 
@@ -19,6 +24,10 @@ class BinaryCrossoverFactory(CrossoverFactory):
             self.CrossoverCreator = HomogeneousCrossover
         elif type == BinaryCrossoverType.ONE_POINT:
             self.CrossoverCreator = OnePointCrossover
+        elif type == BinaryCrossoverType.TWO_POINT:
+            self.CrossoverCreator = TwoPointCrossover
+        elif type == BinaryCrossoverType.THREE_POINT:
+            self.CrossoverCreator = ThreePointCrossover
         else:
             raise Exception("Error: type doesnt exist")
 
