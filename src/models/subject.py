@@ -15,7 +15,7 @@ class BinarySubject(ABC):
                 raise Exception("Error: chromosomes are not equal")
 
         self.__length = length
-        self.__chromosomes = list(chromosomes)
+        self.__chromosomes = chromosomes
 
     def __len__(self):
         return self.__length

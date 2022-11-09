@@ -1,27 +1,39 @@
+from __future__ import annotations
+from enum import Enum
 import random
+from typing import List, Any, Type
+from abc import ABC, abstractmethod
 
 from models.chromosome import BinaryChromosome
+from models.subject import BinarySubject
 
 
-def match_parents(parent1: BinaryChromosome, parent2: BinaryChromosome):
-    if len(parent1) != len(parent2):
-        raise Exception("Error: chromosomes lengths are not equal")
+class BinaryCrossoverType(Enum):
+    HOMOGENEOUS = "HOMOGENEOUS"
+    ONE_POINT = "ONE_POINT"
+    TWO_POINT = "TWO_POINT"
+    THREE_POINT = "THREE_POINT"
 
 
-def one_point(parent1: BinaryChromosome, parent2: BinaryChromosome):
-    match_parents(parent1, parent2)
-    position = random.randint(0, len(parent1))
-    offspring1 = BinaryChromosome(
-        parent1.gens[0:position] + parent2.gens[position : len(parent2)]
-    )
-    offspring2 = BinaryChromosome(
-        parent2.gens[0:position] + parent1.gens[position : len(parent1)]
-    )
-    return offspring1, offspring2
+# def match_parents(parent1: BinaryChromosome, parent2: BinaryChromosome):
+#     if len(parent1) != len(parent2):
+#         raise Exception("Error: chromosomes lengths are not equal")
+
+
+# def one_point(parent1: BinaryChromosome, parent2: BinaryChromosome):
+#     match_parents(parent1, parent2)
+#     position = random.randint(0, len(parent1))
+#     offspring1 = BinaryChromosome(
+#         parent1.gens[0:position] + parent2.gens[position : len(parent2)]
+#     )
+#     offspring2 = BinaryChromosome(
+#         parent2.gens[0:position] + parent1.gens[position : len(parent1)]
+#     )
+#     return offspring1, offspring2
 
 
 def two_point(parent1: BinaryChromosome, parent2: BinaryChromosome):
-    match_parents(parent1, parent2)
+    # match_parents(parent1, parent2)
     position1 = random.randint(0, len(parent1))
     position2 = random.randint(position1, len(parent1))
     offspring1 = BinaryChromosome(
@@ -37,17 +49,160 @@ def two_point(parent1: BinaryChromosome, parent2: BinaryChromosome):
     return offspring1, offspring2
 
 
-def homogeneous(parent1: BinaryChromosome, parent2: BinaryChromosome):
-    match_parents(parent1, parent2)
-    offspring1_gens = parent1.gens.copy()
-    offspring2_gens = parent2.gens.copy()
+class CrossoverFactory(ABC):
+    @abstractmethod
+    def createCrossover(self):
+        pass
 
-    for index, (gen1, gen2) in enumerate(zip(parent1.gens, parent2.gens)):
-        if index % 2 != 0:
-            offspring1_gens[index] = gen2
-            offspring2_gens[index] = gen1
 
-    return BinaryChromosome(offspring1_gens), BinaryChromosome(offspring2_gens)
+class BinaryCrossoverFactory(CrossoverFactory):
+    def __init__(self, type: BinaryCrossoverType, SubjectCreator: Type[BinarySubject]):
+        self.SubjectCreator = SubjectCreator
+        if type == BinaryCrossoverType.HOMOGENEOUS:
+            self.CrossoverCreator = HomogeneousCrossover
+        elif type == BinaryCrossoverType.ONE_POINT:
+            self.CrossoverCreator = OnePointCrossover
+        else:
+            raise Exception("Error: type doesnt exist")
+
+    # make as generic
+    def createCrossover(self):
+        return self.CrossoverCreator(self.SubjectCreator)
+
+
+class Crossover(ABC):
+    @abstractmethod
+    def cross(self, parent_A: Any, parent_B: Any):
+        pass
+
+
+class BinaryCrossover(Crossover):
+    def __init__(self, SubjectCreator: Type[BinarySubject]):
+        self.SubjectCreator = SubjectCreator
+
+    def cross(self, parent_A: BinarySubject, parent_B: BinarySubject):
+        return super().cross(parent_A, parent_B)
+
+    def _zip_gens(self, subject: BinarySubject):
+        return list(
+            zip(
+                *map(
+                    lambda chromosome: chromosome.gens.copy(),
+                    subject.chromosomes,
+                )
+            )
+        )
+
+    def _unzip_gens(self, ziped_gens: List[tuple[bool]]):
+        return list(map(lambda x: list(x), list(zip(*ziped_gens))))
+
+    def _create_subject(self, chromosomes_gens: List[List[bool]]):
+        length = len(chromosomes_gens[0])
+        return self.SubjectCreator(
+            [BinaryChromosome(gens) for gens in chromosomes_gens], length
+        )
+
+
+class HomogeneousCrossover(BinaryCrossover):
+    def cross(self, parent_A: BinarySubject, parent_B: BinarySubject):
+        # zip gens
+        ziped_A_gens = self._zip_gens(parent_A)
+        ziped_B_gens = self._zip_gens(parent_B)
+
+        # cross
+        for index, (zip_A, zip_B) in enumerate(zip(ziped_A_gens, ziped_B_gens)):
+            if index % 2 != 0:
+                ziped_A_gens[index] = zip_B
+                ziped_B_gens[index] = zip_A
+
+        # unzip gens
+        unziped_A_gens = self._unzip_gens(ziped_A_gens)
+        unziped_B_gens = self._unzip_gens(ziped_B_gens)
+
+        # return new subjects
+        return [
+            self._create_subject(unziped_A_gens),
+            self._create_subject(unziped_B_gens),
+        ]
+
+
+class OnePointCrossover(BinaryCrossover):
+    def cross(self, parent_A: BinarySubject, parent_B: BinarySubject):
+        # zip gens
+        ziped_A_gens = self._zip_gens(parent_A)
+        ziped_B_gens = self._zip_gens(parent_B)
+
+        # cross
+        position = random.randint(0, len(parent_A))
+        print(f"Position: {position}")
+        ziped_offspring_A_gens = (
+            ziped_A_gens[0:position] + ziped_B_gens[position : len(ziped_A_gens)]
+        )
+        ziped_offspring_B_gens = (
+            ziped_B_gens[0:position] + ziped_A_gens[position : len(ziped_A_gens)]
+        )
+
+        # unzip gens
+        unziped_offspring_A_gens = self._unzip_gens(ziped_offspring_A_gens)
+        unziped_offspring_B_gens = self._unzip_gens(ziped_offspring_B_gens)
+
+        # return new subjects
+        return [
+            self._create_subject(unziped_offspring_A_gens),
+            self._create_subject(unziped_offspring_B_gens),
+        ]
+
+
+class TwoPointCrossover(BinaryCrossover):
+    def cross(self, parent_A: BinarySubject, parent_B: BinarySubject):
+        # zip gens
+        ziped_A_gens = self._zip_gens(parent_A)
+        ziped_B_gens = self._zip_gens(parent_B)
+
+        # cross
+        position = random.randint(0, len(parent_A))
+        ziped_offspring_A_gens = (
+            ziped_A_gens[0:position] + ziped_B_gens[position : len(ziped_A_gens)]
+        )
+        ziped_offspring_B_gens = (
+            ziped_B_gens[0:position] + ziped_A_gens[position : len(ziped_A_gens)]
+        )
+
+        # unzip gens
+        unziped_offspring_A_gens = self._unzip_gens(ziped_offspring_A_gens)
+        unziped_offspring_B_gens = self._unzip_gens(ziped_offspring_B_gens)
+
+        # return new subjects
+        return [
+            self._create_subject(unziped_offspring_A_gens),
+            self._create_subject(unziped_offspring_B_gens),
+        ]
+
+
+class ThreePointCrossover(BinaryCrossover):
+    def cross(self, parent_A: BinarySubject, parent_B: BinarySubject):
+        # zip gens
+        ziped_A_gens = self._zip_gens(parent_A)
+        ziped_B_gens = self._zip_gens(parent_B)
+
+        # cross
+        position = random.randint(0, len(parent_A))
+        ziped_offspring_A_gens = (
+            ziped_A_gens[0:position] + ziped_B_gens[position : len(ziped_A_gens)]
+        )
+        ziped_offspring_B_gens = (
+            ziped_B_gens[0:position] + ziped_A_gens[position : len(ziped_A_gens)]
+        )
+
+        # unzip gens
+        unziped_offspring_A_gens = self._unzip_gens(ziped_offspring_A_gens)
+        unziped_offspring_B_gens = self._unzip_gens(ziped_offspring_B_gens)
+
+        # return new subjects
+        return [
+            self._create_subject(unziped_offspring_A_gens),
+            self._create_subject(unziped_offspring_B_gens),
+        ]
 
 
 __all__ = ["one_point", "two_point", "homogeneous"]
