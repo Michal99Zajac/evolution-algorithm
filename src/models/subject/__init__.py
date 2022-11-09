@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from models.chromosome import BinaryChromosome
+from processes.mutation.core import Mutation
 
 
 class BinarySubject(ABC):
@@ -25,11 +26,11 @@ class BinarySubject(ABC):
         return self.__chromosomes
 
     @abstractmethod
-    def inverse(self):
+    def inverse(self, left: int, right: int):
         pass
 
     @abstractmethod
-    def mutate(self):
+    def mutate(self, mutation: Mutation):
         pass
 
 
@@ -43,6 +44,6 @@ class X2Subject(BinarySubject):
         for chromosome in self.chromosomes:
             chromosome.inverse(left=left, right=right)
 
-    def mutate(self, *args: int):
+    def mutate(self, mutation: Mutation):
         for chromosome in self.chromosomes:
-            chromosome.mutate(args)
+            mutation.mutate(chromosome)

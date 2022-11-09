@@ -1,46 +1,26 @@
-from __future__ import annotations
-from abc import ABC, abstractmethod
-from typing import List, Callable
 import math
 import random
+from typing import Callable, Tuple, Any, List
 
-from adapters import X2SubjectAdapter
-
-
-class BinarySelection(ABC):
-    _type: str = "min"
-
-    @abstractmethod
-    def select(self, subjects: List[X2SubjectAdapter]):
-        pass
-
-    def __min_sorter(self, subject: X2SubjectAdapter):
-        return subject.value
-
-    def __max_sorter(self, subject: X2SubjectAdapter):
-        return -subject.value
-
-    def _sort(self, subjects: List[X2SubjectAdapter]):
-        return sorted(
-            subjects,
-            key=self.__max_sorter if self._type == "max" else self.__min_sorter,
-        )
+from models.subject.decorators import ValuerBinarySubject
+from processes.selection.core import Selection
+from models.valuer import Valuer
 
 
-class TheBestSelection(BinarySelection):
+class TheBestSelection(Selection):
     def __init__(self, percentage: float, type: str = "min"):
         if percentage > 1 or percentage < 0:
             raise Exception("Error: percentage should be number between 0 and 1")
         self.__percentage = percentage
         self._type = type
 
-    def select(self, subjects: List[X2SubjectAdapter]):
-        the_best = self._sort(subjects)
-        size = math.floor(len(subjects) * self.__percentage)
+    def select(self, valuers: List[ValuerBinarySubject]):
+        the_best = self._sort(valuers)
+        size = math.floor(len(valuers) * self.__percentage)
         return the_best[0:size]
 
 
-class TournamentSelection(BinarySelection):
+class TournamentSelection(Selection):
     def __init__(self, percentage: float, group_size: int, type: str = "min"):
         if percentage > 1 or percentage < 0:
             raise Exception("Error: percentage should be number between 0 and 1")
@@ -48,10 +28,10 @@ class TournamentSelection(BinarySelection):
         self.__percentage = percentage
         self._type = type
 
-    def select(self, subjects: List[X2SubjectAdapter]):
-        selected: List[X2SubjectAdapter] = []
-        __subjects = subjects.copy()
-        editions = math.floor(len(subjects) * self.__percentage)
+    def select(self, valuers: List[Any]):
+        selected: List[ValuerBinarySubject] = []
+        __subjects = valuers.copy()
+        editions = math.floor(len(valuers) * self.__percentage)
 
         for _ in range(editions):
             # draw and selection
@@ -67,8 +47,8 @@ class TournamentSelection(BinarySelection):
 
         return selected
 
-    def __draw(self, subjects: List[X2SubjectAdapter]):
-        selected: List[X2SubjectAdapter] = []
+    def __draw(self, subjects: List[ValuerBinarySubject]):
+        selected: List[ValuerBinarySubject] = []
         BORDER = 0.05  # probability scope
 
         # tournament group size is bigger then whole population
@@ -86,30 +66,30 @@ class TournamentSelection(BinarySelection):
         return selected
 
 
-class RoulettaSelection(BinarySelection):
+class RoulettaSelection(Selection):
     def __init__(self, percentage: float, type: str = "min"):
         if percentage > 1 or percentage < 0:
             raise Exception("Error: percentage should be number between 0 and 1")
         self.__percentage = percentage
         self._type = type
 
-    def select(self, subjects: List[X2SubjectAdapter]):
-        __subjects__ = subjects.copy()
-        selected: List[X2SubjectAdapter] = []
+    def select(self, valuers: List[ValuerBinarySubject]):
+        __subjects__ = valuers.copy()
+        selected: List[ValuerBinarySubject] = []
 
-        for _ in range(math.floor(len(subjects) * self.__percentage)):
+        for _ in range(math.floor(len(valuers) * self.__percentage)):
             distributanta = self.__make_distributanta(__subjects__)
             index = self.__twist(distributanta)
             selected.append(__subjects__.pop(index))
 
         return selected
 
-    def __make_distributanta(self, subjects: List[X2SubjectAdapter]):
-        totaliser: Callable[[X2SubjectAdapter], float] = (
+    def __make_distributanta(self, subjects: List[ValuerBinarySubject]):
+        totaliser: Callable[[ValuerBinarySubject], float] = (
             lambda subject: subject.value if self._type == "max" else 1 / subject.value
         )
         total = sum(map(totaliser, subjects))
-        fractioner: Callable[[X2SubjectAdapter], float] = (
+        fractioner: Callable[[ValuerBinarySubject], float] = (
             lambda subject: (
                 subject.value if self._type == "max" else 1 / subject.value
             )
@@ -119,7 +99,7 @@ class RoulettaSelection(BinarySelection):
         distributanta = [sum(fractions[0:index]) for index in range(len(fractions))]
         return list(zip(distributanta, subjects))
 
-    def __twist(self, distributanta: List[tuple[float | int, X2SubjectAdapter]]):
+    def __twist(self, distributanta: List[Tuple[float, ValuerBinarySubject]]):
         chance = random.random()
         index = 0
         is_found = False
