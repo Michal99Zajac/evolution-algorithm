@@ -7,6 +7,8 @@ from processes.mutation.core import Mutation
 
 
 class BinarySubject(ABC):
+    chromosome_number = 0
+
     def __init__(self, chromosomes: List[BinaryChromosome], length: int):
         if len(chromosomes) == 0:
             raise Exception("Error: Subject have to have at least on chromosome")
@@ -35,8 +37,10 @@ class BinarySubject(ABC):
 
 
 class X2Subject(BinarySubject):
+    chromosome_number = 2
+
     def __init__(self, chromosomes: List[BinaryChromosome], length: int):
-        if len(chromosomes) != 2:
+        if len(chromosomes) != self.chromosome_number:
             raise Exception("Error: constructor didn't get two chromosmes")
         super().__init__(chromosomes, length)
 
