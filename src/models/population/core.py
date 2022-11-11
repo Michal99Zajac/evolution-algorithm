@@ -99,7 +99,7 @@ class BinaryPopulation(Population):
 
         # mutation
         for subject in self._subjects:
-            subject.mutate(self._mutation)
+            self._mutation.mutate(subject)
 
         # inversion
         for subject in self._subjects:

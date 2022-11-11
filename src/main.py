@@ -21,7 +21,7 @@ if __name__ == "__main__":
     inversion = Inversion(0.3)
 
     pop = BinaryPopulation(
-        100,
+        1000,
         X2Subject,
         crossover,
         mutation,

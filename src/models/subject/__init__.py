@@ -11,7 +11,7 @@ class BinarySubject(ABC):
 
     def __init__(self, chromosomes: List[BinaryChromosome], length: int):
         if len(chromosomes) == 0:
-            raise Exception("Error: Subject have to have at least on chromosome")
+            raise Exception("Error: Subject has to have at least on chromosome")
 
         for chromosome in chromosomes:
             if length != len(chromosome):
@@ -32,7 +32,7 @@ class BinarySubject(ABC):
         pass
 
     @abstractmethod
-    def mutate(self, mutation: Mutation):
+    def mutate(self, *args: int):
         pass
 
 
@@ -41,13 +41,13 @@ class X2Subject(BinarySubject):
 
     def __init__(self, chromosomes: List[BinaryChromosome], length: int):
         if len(chromosomes) != self.chromosome_number:
-            raise Exception("Error: constructor didn't get two chromosmes")
+            raise Exception("Error: constructor didn't get two chromosomes")
         super().__init__(chromosomes, length)
 
     def inverse(self, left: int, right: int):
         for chromosome in self.chromosomes:
             chromosome.inverse(left=left, right=right)
 
-    def mutate(self, mutation: Mutation):
+    def mutate(self, *args: int):
         for chromosome in self.chromosomes:
-            mutation.mutate(chromosome)
+            chromosome.mutate(*args)

@@ -3,10 +3,10 @@ import random
 from abc import ABC, abstractmethod
 from typing import Callable, TypeVar
 
-from models.chromosome import BinaryChromosome
+from models.subject import BinarySubject
 
 TMutation = TypeVar("TMutation", bound="Mutation")
-T = TypeVar("T", BinaryChromosome, any)
+T = TypeVar("T", BinarySubject, any)
 
 
 class Mutation(ABC):
@@ -16,14 +16,14 @@ class Mutation(ABC):
         self.__probability = probability
 
     def checker(function: Callable[[TMutation, T], T]):
-        def mutate(self: TMutation, chromosome: T):
+        def mutate(self: TMutation, subject: T):
             if self.__probability >= random.random():
-                return function(self, chromosome)
-            return chromosome
+                return function(self, subject)
+            return subject
 
         return mutate
 
     @checker
     @abstractmethod
-    def mutate(self, chromosome: T):
+    def mutate(self, subject: T):
         pass
