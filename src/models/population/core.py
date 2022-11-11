@@ -3,11 +3,13 @@ from typing import TypeVar, Type, List
 import random
 
 from models.chromosome import BinaryChromosome
-from processes.crossover.core import Crossover, CrossoverFactory
+from processes.crossover.core import Crossover
 from models.subject import BinarySubject
 from processes.selection.core import Selection
 from models.subject.decorators import ValuerBinarySubject
 from fitness.schaffer_N4 import schaffer_N4
+from processes.mutation.core import Mutation
+from utils.two_index import two_index
 
 C = TypeVar("C")
 
@@ -18,10 +20,12 @@ class Population(ABC):
         amount: int,
         SubjectCreator: Type[C],
         crossover: Crossover,
+        mutation: Mutation,
         selection: Selection,
     ):
         self._amount = amount
         self._crossover = crossover
+        self._mutation = mutation
         self._SubjectCreator = SubjectCreator
         self._selection = selection
 
@@ -47,13 +51,14 @@ class BinaryPopulation(Population):
         amount: int,
         SubjectCreator: Type[BinarySubject],
         crossover: Crossover,
+        mutation: Mutation,
         selection: Selection,
     ):
-        super().__init__(amount, SubjectCreator, crossover, selection)
+        super().__init__(amount, SubjectCreator, crossover, mutation, selection)
         self._SubjectCreator = SubjectCreator
 
     def _generate(self):
-        chromosome_lenght = BinaryChromosome.chromosome_lenght(6, -10, 10)
+        chromosome_lenght = BinaryChromosome.chromosome_lenght(6, -1000, 1000)
         self._subjects = [
             self._SubjectCreator(
                 [
@@ -68,7 +73,7 @@ class BinaryPopulation(Population):
     def _evolve(self):
         # selection
         valuerSubjects = [
-            ValuerBinarySubject(subject, -10, 10, schaffer_N4)
+            ValuerBinarySubject(subject, -1000, 1000, schaffer_N4)
             for subject in self._subjects
         ]
         parents: List[BinarySubject] = self._selection.select(
@@ -78,14 +83,9 @@ class BinaryPopulation(Population):
 
         # crossover
         while len(self._subjects) != self._amount:
-            index_one = 0
-            index_two = 0
-
-            while index_one == index_two:
-                index_one = random.randint(0, len(parents) - 1)
-                index_two = random.randint(0, len(parents) - 1)
-
+            index_one, index_two = two_index(len(parents) - 1)
             offsprings = self._crossover.cross(parents[index_one], parents[index_two])
+
             # subjects amount is odd
             if len(self._subjects) + 1 == self._amount:
                 self._subjects.append(offsprings[0])
@@ -94,22 +94,18 @@ class BinaryPopulation(Population):
             self._subjects.extend(offsprings)
 
         # mutation
+        for subject in self._subjects:
+            subject.mutate(self._mutation)
 
     def run(self, epochs: int):
         for _ in range(epochs):
             self._evolve()
 
-            print(
-                list(
-                    map(
-                        lambda x: ValuerBinarySubject(x, -10, 10, schaffer_N4).value,
-                        self._subjects,
-                    )
+            a = list(
+                map(
+                    lambda x: ValuerBinarySubject(x, -1000, 1000, schaffer_N4).value,
+                    self._subjects,
                 )
             )
-            # the_bests = [
-            #     ValuerBinarySubject(subject, -10, 10, schaffer_N4)
-            #     for subject in self._subjects
-            # ]
-            # the_bests.sort(key=lambda x: x.value)
-            # print(the_bests[0].value)
+            a.sort()
+            print(a[0])
