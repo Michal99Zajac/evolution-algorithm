@@ -13,10 +13,14 @@ from models.subject.decorators import ValuerBinarySubject
 from models.population.core import BinaryPopulation
 
 if __name__ == "__main__":
+    crossover = BinaryCrossoverFactory(BinaryCrossoverType.ONE_POINT).create_crossover(
+        X2Subject
+    )
+
     pop = BinaryPopulation(
-        6,
+        4,
         X2Subject,
-        BinaryCrossoverFactory(BinaryCrossoverType.ONE_POINT),
+        crossover,
         TheBestSelection(0.5, type="min"),
     )
     pop.run(100)

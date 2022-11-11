@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar, Type
+from typing import TypeVar, Type, List
+import random
 
 from models.chromosome import BinaryChromosome
-from processes.crossover.core import CrossoverFactory
+from processes.crossover.core import Crossover, CrossoverFactory
 from models.subject import BinarySubject
 from processes.selection.core import Selection
 from models.subject.decorators import ValuerBinarySubject
@@ -16,11 +17,11 @@ class Population(ABC):
         self,
         amount: int,
         SubjectCreator: Type[C],
-        crossover_factory: CrossoverFactory,
+        crossover: Crossover,
         selection: Selection,
     ):
         self._amount = amount
-        self._crossover_factory = crossover_factory
+        self._crossover = crossover
         self._SubjectCreator = SubjectCreator
         self._selection = selection
 
@@ -45,10 +46,10 @@ class BinaryPopulation(Population):
         self,
         amount: int,
         SubjectCreator: Type[BinarySubject],
-        crossover_factory: CrossoverFactory,
+        crossover: Crossover,
         selection: Selection,
     ):
-        super().__init__(amount, SubjectCreator, crossover_factory, selection)
+        super().__init__(amount, SubjectCreator, crossover, selection)
         self._SubjectCreator = SubjectCreator
 
     def _generate(self):
@@ -70,10 +71,45 @@ class BinaryPopulation(Population):
             ValuerBinarySubject(subject, -10, 10, schaffer_N4)
             for subject in self._subjects
         ]
-        selected = self._selection.select(valuerSubjects)
+        parents: List[BinarySubject] = self._selection.select(
+            valuerSubjects
+        )  # select parents
+        self._subjects = parents  # assign to the next populaion
 
-        print(selected)
+        # crossover
+        while len(self._subjects) != self._amount:
+            index_one = 0
+            index_two = 0
+
+            while index_one == index_two:
+                index_one = random.randint(0, len(parents) - 1)
+                index_two = random.randint(0, len(parents) - 1)
+
+            offsprings = self._crossover.cross(parents[index_one], parents[index_two])
+            # subjects amount is odd
+            if len(self._subjects) + 1 == self._amount:
+                self._subjects.append(offsprings[0])
+                continue
+
+            self._subjects.extend(offsprings)
+
+        # mutation
 
     def run(self, epochs: int):
         for _ in range(epochs):
             self._evolve()
+
+            print(
+                list(
+                    map(
+                        lambda x: ValuerBinarySubject(x, -10, 10, schaffer_N4).value,
+                        self._subjects,
+                    )
+                )
+            )
+            # the_bests = [
+            #     ValuerBinarySubject(subject, -10, 10, schaffer_N4)
+            #     for subject in self._subjects
+            # ]
+            # the_bests.sort(key=lambda x: x.value)
+            # print(the_bests[0].value)
