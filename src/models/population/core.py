@@ -1,16 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import TypeVar, Type, List
-import random
 
-from models.chromosome import BinaryChromosome
 from processes.crossover.core import Crossover
-from models.subject import BinarySubject
 from processes.selection.core import Selection
-from models.subject.decorators import ValuerBinarySubject
-from fitness.schaffer_N4 import schaffer_N4
 from processes.mutation.core import Mutation
-from utils.two_index import two_index
-from processes.inversion import Inversion
+from models.valuer import Valuer
 
 C = TypeVar("C")
 
@@ -32,6 +26,9 @@ class Population(ABC):
 
         # generate init population
         self._generate()
+
+    def _pick_the_best_value(self, valuers: List[Valuer]):
+        return sorted(valuers, key=lambda valuer: valuer.value)[0].value
 
     @abstractmethod
     def _generate(self):

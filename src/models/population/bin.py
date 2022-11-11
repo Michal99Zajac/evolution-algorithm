@@ -75,14 +75,32 @@ class BinaryPopulation(Population):
             self._inversion.inverse(subject)
 
     def run(self, epochs: int):
-        for _ in range(epochs):
+        evolution = [
+            {
+                "epoch": 0,
+                "value": self._pick_the_best_value(
+                    [
+                        ValuerBinarySubject(subject, -1000, 1000, schaffer_N4)
+                        for subject in self._subjects
+                    ]
+                ),
+            }
+        ]
+
+        for epoch in range(1, epochs):
             self._evolve()
 
-            a = list(
-                map(
-                    lambda x: ValuerBinarySubject(x, -1000, 1000, schaffer_N4).value,
-                    self._subjects,
-                )
+            # set the data
+            evolution.append(
+                {
+                    "epoch": epoch,
+                    "value": self._pick_the_best_value(
+                        [
+                            ValuerBinarySubject(subject, -1000, 1000, schaffer_N4)
+                            for subject in self._subjects
+                        ]
+                    ),
+                }
             )
-            a.sort()
-            print(a[0])
+
+        return evolution
