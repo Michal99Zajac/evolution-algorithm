@@ -14,7 +14,10 @@ from models.population.core import BinaryPopulation
 
 if __name__ == "__main__":
     pop = BinaryPopulation(
-        100, X2Subject, BinaryCrossoverFactory(BinaryCrossoverType.ONE_POINT)
+        6,
+        X2Subject,
+        BinaryCrossoverFactory(BinaryCrossoverType.ONE_POINT),
+        TheBestSelection(0.5, type="min"),
     )
     pop.run(100)
     # chromosome_lenght = BinaryChromosome.chromosome_lenght(6, -10, 10)

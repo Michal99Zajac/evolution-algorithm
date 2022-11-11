@@ -4,6 +4,9 @@ from typing import TypeVar, Type
 from models.chromosome import BinaryChromosome
 from processes.crossover.core import CrossoverFactory
 from models.subject import BinarySubject
+from processes.selection.core import Selection
+from models.subject.decorators import ValuerBinarySubject
+from fitness.schaffer_N4 import schaffer_N4
 
 C = TypeVar("C")
 
@@ -14,11 +17,12 @@ class Population(ABC):
         amount: int,
         SubjectCreator: Type[C],
         crossover_factory: CrossoverFactory,
+        selection: Selection,
     ):
         self._amount = amount
         self._crossover_factory = crossover_factory
         self._SubjectCreator = SubjectCreator
-        self._subjects = []
+        self._selection = selection
 
         # generate init population
         self._generate()
@@ -42,8 +46,9 @@ class BinaryPopulation(Population):
         amount: int,
         SubjectCreator: Type[BinarySubject],
         crossover_factory: CrossoverFactory,
+        selection: Selection,
     ):
-        super().__init__(amount, SubjectCreator, crossover_factory)
+        super().__init__(amount, SubjectCreator, crossover_factory, selection)
         self._SubjectCreator = SubjectCreator
 
     def _generate(self):
@@ -60,8 +65,15 @@ class BinaryPopulation(Population):
         ]
 
     def _evolve(self):
-        return super()._evolve()
+        # selection
+        valuerSubjects = [
+            ValuerBinarySubject(subject, -10, 10, schaffer_N4)
+            for subject in self._subjects
+        ]
+        selected = self._selection.select(valuerSubjects)
+
+        print(selected)
 
     def run(self, epochs: int):
-        print(self._subjects)
-        print(epochs)
+        for _ in range(epochs):
+            self._evolve()
