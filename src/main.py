@@ -21,12 +21,20 @@ if __name__ == "__main__":
     inversion = Inversion(0.3)
 
     pop = BinaryPopulation(
-        100,
-        X2Subject,
-        crossover,
-        mutation,
-        TournamentSelection(0.5, 3, type="min"),
-        inversion,
+        {
+            "amount": 100,
+            "SubjectCreator": X2Subject,
+            "selection": TournamentSelection(0.5, 3, type="min"),
+            "crossover": crossover,
+            "mutation": mutation,
+            "inversion": inversion,
+        },
+        {
+            "fitness": schaffer_N4,
+            "left_limit": -1000,
+            "right_limit": 1000,
+            "precision": 6,
+        },
     )
     data = pop.run(1000)
     print(data)

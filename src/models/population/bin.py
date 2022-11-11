@@ -1,36 +1,31 @@
-from abc import ABC, abstractmethod
-from typing import TypeVar, Type, List
-import random
+from typing import Type, List
 
 from models.chromosome import BinaryChromosome
-from processes.crossover.core import Crossover
 from models.subject import BinarySubject
-from processes.selection.core import Selection
 from models.subject.decorators import ValuerBinarySubject
-from fitness.schaffer_N4 import schaffer_N4
-from processes.mutation.core import Mutation
 from utils.two_index import two_index
 from processes.inversion import Inversion
 
-from .core import Population
+from .core import Population, Props, Config
+
+
+class BinaryProps(Props):
+    inversion: Inversion
 
 
 class BinaryPopulation(Population):
-    def __init__(
-        self,
-        amount: int,
-        SubjectCreator: Type[BinarySubject],
-        crossover: Crossover,
-        mutation: Mutation,
-        selection: Selection,
-        inversion: Inversion,
-    ):
-        super().__init__(amount, SubjectCreator, crossover, mutation, selection)
-        self._SubjectCreator = SubjectCreator
-        self._inversion = inversion
+    _SubjectCreator: Type[BinarySubject]
+
+    def __init__(self, props: BinaryProps, config: Config):
+        super().__init__(props, config)
+        self._inversion = props["inversion"]
 
     def _generate(self):
-        chromosome_lenght = BinaryChromosome.chromosome_lenght(6, -1000, 1000)
+        chromosome_lenght = BinaryChromosome.chromosome_lenght(
+            self._config["precision"],
+            self._config["left_limit"],
+            self._config["right_limit"],
+        )
         self._subjects = [
             self._SubjectCreator(
                 [
@@ -45,7 +40,12 @@ class BinaryPopulation(Population):
     def _evolve(self):
         # selection
         valuerSubjects = [
-            ValuerBinarySubject(subject, -1000, 1000, schaffer_N4)
+            ValuerBinarySubject(
+                subject,
+                self._config["left_limit"],
+                self._config["right_limit"],
+                self._config["fitness"],
+            )
             for subject in self._subjects
         ]
         parents: List[BinarySubject] = self._selection.select(valuerSubjects)
@@ -80,7 +80,12 @@ class BinaryPopulation(Population):
                 "epoch": 0,
                 "value": self._pick_the_best_value(
                     [
-                        ValuerBinarySubject(subject, -1000, 1000, schaffer_N4)
+                        ValuerBinarySubject(
+                            subject,
+                            self._config["left_limit"],
+                            self._config["right_limit"],
+                            self._config["fitness"],
+                        )
                         for subject in self._subjects
                     ]
                 ),
@@ -96,7 +101,12 @@ class BinaryPopulation(Population):
                     "epoch": epoch,
                     "value": self._pick_the_best_value(
                         [
-                            ValuerBinarySubject(subject, -1000, 1000, schaffer_N4)
+                            ValuerBinarySubject(
+                                subject,
+                                self._config["left_limit"],
+                                self._config["right_limit"],
+                                self._config["fitness"],
+                            )
                             for subject in self._subjects
                         ]
                     ),
