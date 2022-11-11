@@ -32,5 +32,5 @@ class BinaryCrossoverFactory(CrossoverFactory):
             raise Exception("Error: type doesnt exist")
 
     # make as generic
-    def create_crossover(self, SubjectCreator: Type[BinarySubject]):
-        return self.CrossoverCreator(SubjectCreator)
+    def create_crossover(self, SubjectCreator: Type[BinarySubject], probability: float):
+        return self.CrossoverCreator(SubjectCreator, probability)

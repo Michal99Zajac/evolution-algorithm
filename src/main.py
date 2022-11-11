@@ -14,7 +14,7 @@ from models.population.core import BinaryPopulation
 
 if __name__ == "__main__":
     crossover = BinaryCrossoverFactory(BinaryCrossoverType.ONE_POINT).create_crossover(
-        X2Subject
+        X2Subject, 0.3
     )
     mutation = SinglePointMutation(0.3)
 

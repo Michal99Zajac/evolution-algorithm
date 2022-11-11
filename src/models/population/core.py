@@ -76,15 +76,16 @@ class BinaryPopulation(Population):
             ValuerBinarySubject(subject, -1000, 1000, schaffer_N4)
             for subject in self._subjects
         ]
-        parents: List[BinarySubject] = self._selection.select(
-            valuerSubjects
-        )  # select parents
+        parents: List[BinarySubject] = self._selection.select(valuerSubjects)
         self._subjects = parents  # assign to the next populaion
 
         # crossover
         while len(self._subjects) != self._amount:
             index_one, index_two = two_index(len(parents) - 1)
             offsprings = self._crossover.cross(parents[index_one], parents[index_two])
+
+            if not offsprings:
+                continue
 
             # subjects amount is odd
             if len(self._subjects) + 1 == self._amount:

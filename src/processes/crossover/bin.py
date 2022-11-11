@@ -10,7 +10,8 @@ ZipedSubjectGens = List[Tuple[bool]]
 
 
 class BinaryCrossover(Crossover):
-    def __init__(self, SubjectCreator: Type[BinarySubject]):
+    def __init__(self, SubjectCreator: Type[BinarySubject], probability: float):
+        super().__init__(probability)
         self.SubjectCreator = SubjectCreator
 
     def _zip_subject_gens(self, *subjects: BinarySubject):
@@ -59,6 +60,7 @@ class BinaryCrossover(Crossover):
 
 
 class HomogeneousCrossover(BinaryCrossover):
+    @Crossover.checker
     def cross(self, parent_A: BinarySubject, parent_B: BinarySubject):
         # zip subjects gens
         [ziped_subject_A_gens, ziped_subject_B_gens] = self._zip_subject_gens(
@@ -78,6 +80,7 @@ class HomogeneousCrossover(BinaryCrossover):
 
 
 class OnePointCrossover(BinaryCrossover):
+    @Crossover.checker
     def cross(self, parent_A: BinarySubject, parent_B: BinarySubject):
         # zip subject gens
         [ziped_subject_A_gens, ziped_subject_B_gens] = self._zip_subject_gens(
@@ -101,6 +104,7 @@ class OnePointCrossover(BinaryCrossover):
 
 
 class TwoPointCrossover(BinaryCrossover):
+    @Crossover.checker
     def cross(self, parent_A: BinarySubject, parent_B: BinarySubject):
         # zip subject gens
         [ziped_subject_A_gens, ziped_subject_B_gens] = self._zip_subject_gens(
