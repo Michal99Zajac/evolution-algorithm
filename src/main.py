@@ -11,12 +11,14 @@ from processes.selection.bin import (
 from models.subject import X2Subject
 from models.subject.decorators import ValuerBinarySubject
 from models.population.core import BinaryPopulation
+from processes.inversion import Inversion
 
 if __name__ == "__main__":
     crossover = BinaryCrossoverFactory(BinaryCrossoverType.ONE_POINT).create_crossover(
         X2Subject, 0.3
     )
     mutation = SinglePointMutation(0.3)
+    inversion = Inversion(0.3)
 
     pop = BinaryPopulation(
         100,
@@ -24,5 +26,6 @@ if __name__ == "__main__":
         crossover,
         mutation,
         TournamentSelection(0.5, 3, type="min"),
+        inversion,
     )
     pop.run(1000)

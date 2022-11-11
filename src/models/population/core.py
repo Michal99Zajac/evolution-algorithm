@@ -10,6 +10,7 @@ from models.subject.decorators import ValuerBinarySubject
 from fitness.schaffer_N4 import schaffer_N4
 from processes.mutation.core import Mutation
 from utils.two_index import two_index
+from processes.inversion import Inversion
 
 C = TypeVar("C")
 
@@ -53,9 +54,11 @@ class BinaryPopulation(Population):
         crossover: Crossover,
         mutation: Mutation,
         selection: Selection,
+        inversion: Inversion,
     ):
         super().__init__(amount, SubjectCreator, crossover, mutation, selection)
         self._SubjectCreator = SubjectCreator
+        self._inversion = inversion
 
     def _generate(self):
         chromosome_lenght = BinaryChromosome.chromosome_lenght(6, -1000, 1000)
@@ -97,6 +100,10 @@ class BinaryPopulation(Population):
         # mutation
         for subject in self._subjects:
             subject.mutate(self._mutation)
+
+        # inversion
+        for subject in self._subjects:
+            self._inversion.inverse(subject)
 
     def run(self, epochs: int):
         for _ in range(epochs):
