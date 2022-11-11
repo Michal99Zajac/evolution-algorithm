@@ -10,7 +10,7 @@ from processes.selection.bin import (
 )
 from models.subject import X2Subject
 from models.subject.decorators import ValuerBinarySubject
-from models.population.core import BinaryPopulation
+from models.population.bin import BinaryPopulation
 from processes.inversion import Inversion
 
 if __name__ == "__main__":

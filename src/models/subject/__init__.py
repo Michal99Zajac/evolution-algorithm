@@ -3,7 +3,6 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from models.chromosome import BinaryChromosome
-from processes.mutation.core import Mutation
 
 
 class BinarySubject(ABC):
@@ -17,15 +16,15 @@ class BinarySubject(ABC):
             if length != len(chromosome):
                 raise Exception("Error: chromosomes are not equal")
 
-        self.__length = length
-        self.__chromosomes = chromosomes
+        self._length = length
+        self._chromosomes = chromosomes
 
     def __len__(self):
-        return self.__length
+        return self._length
 
     @property
     def chromosomes(self):
-        return self.__chromosomes
+        return self._chromosomes
 
     @abstractmethod
     def inverse(self, left: int, right: int):
@@ -45,9 +44,9 @@ class X2Subject(BinarySubject):
         super().__init__(chromosomes, length)
 
     def inverse(self, left: int, right: int):
-        for chromosome in self.chromosomes:
+        for chromosome in self._chromosomes:
             chromosome.inverse(left=left, right=right)
 
     def mutate(self, *args: int):
-        for chromosome in self.chromosomes:
+        for chromosome in self._chromosomes:
             chromosome.mutate(*args)
