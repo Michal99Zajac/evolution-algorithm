@@ -37,6 +37,7 @@ class Population(ABC):
         self._generate()
 
     def _pick_the_best_value(self, valuers: List[Valuer]):
+        # FIXME: add min/max param
         return sorted(valuers, key=lambda valuer: valuer.value)[0].value
 
     @abstractmethod

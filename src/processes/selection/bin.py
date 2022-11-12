@@ -1,10 +1,16 @@
 import math
 import random
 from typing import Callable, Tuple, Any, List
+from enum import Enum
 
 from models.subject.decorators import ValuerBinarySubject
 from processes.selection.core import Selection
-from models.valuer import Valuer
+
+
+class BinSelection(Enum):
+    THE_BEST = "THE_BEST"
+    TOURNAMENT = "TOURNAMENT"
+    ROULETTE = "ROULETTE"
 
 
 class TheBestSelection(Selection):
@@ -66,7 +72,7 @@ class TournamentSelection(Selection):
         return selected
 
 
-class RoulettaSelection(Selection):
+class RouletteSelection(Selection):
     def __init__(self, percentage: float, type: str = "min"):
         if percentage > 1 or percentage < 0:
             raise Exception("Error: percentage should be number between 0 and 1")

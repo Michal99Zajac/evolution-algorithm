@@ -1,6 +1,14 @@
 import random
+from enum import Enum
+
 from models.subject import BinarySubject
 from processes.mutation.core import Mutation
+
+
+class BinMutation(Enum):
+    EDGE = "EDGE"
+    SINGLE = "SINGLE"
+    TWO_POINT = "TWO_POINT"
 
 
 class EdgeMutation(Mutation):
