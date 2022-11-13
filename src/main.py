@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import Union
+from fastapi.middleware.cors import CORSMiddleware
 
-from models.chromosome import BinaryChromosome
 from models.subject import X2Subject
 from processes.crossover.factory import BinaryCrossoverFactory, BinaryCrossoverType
 from processes.mutation.bin import (
@@ -18,11 +18,18 @@ from processes.selection.bin import (
     RouletteSelection,
     BinSelection,
 )
-from models.subject.decorators import ValuerBinarySubject
 from models.population.bin import BinaryPopulation
 from processes.inversion import Inversion
 
 app = FastAPI(debug=True)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    allow_origin_regex="https:\/\/.*\.vercel\.app|http:\/\/localhost:3000",
+)
 
 
 @app.get("/api/bin")
