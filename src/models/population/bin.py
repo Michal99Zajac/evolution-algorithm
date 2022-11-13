@@ -50,16 +50,11 @@ class BinaryPopulation(Population):
 
     def _evolve(self):
         # selection
-        valuerSubjects = [
-            ValuerBinarySubject(
-                subject,
-                self._config["left_limit"],
-                self._config["right_limit"],
-                self._config["fitness"],
-            )
-            for subject in self._subjects
-        ]
+        valuerSubjects = self._generate_valuers(self._subjects)
         parents: List[BinarySubject] = self._selection.select(valuerSubjects)
+
+        # clear subjects (offsprings)
+        self._subjects = []
 
         # crossover
         while len(self._subjects) != self._amount:
