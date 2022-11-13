@@ -37,13 +37,16 @@ class Population(ABC):
         # generate init population
         self._generate()
 
-    def _pick_the_best_value(self, valuers: List[Valuer]):
+    def _pick_the_best(self, valuers: List[Valuer]):
         return sorted(
             valuers,
             key=lambda valuer: valuer.value
             if self._config["type"] == "min"
             else -valuer.value,
-        )[0].value
+        )[0]
+
+    def _avarage(self, valuers: List[Valuer]):
+        return sum(map(lambda valuer: valuer.value, valuers)) / len(valuers)
 
     @abstractmethod
     def _generate(self):

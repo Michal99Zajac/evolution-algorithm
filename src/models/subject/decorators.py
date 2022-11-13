@@ -17,12 +17,16 @@ class ValuerBinarySubject(BinarySubject, Valuer):
         self.subject = subject
 
         # calc value of the subject
-        values = self.__transform(subject.chromosomes, left_limit, right_limit)
-        self.__value: float = fitness(*values)
+        self.__values = self.__transform(subject.chromosomes, left_limit, right_limit)
+        self.__value: float = fitness(*self.__values)
 
     @property
     def value(self):
         return self.__value
+
+    @property
+    def values(self):
+        return self.__values
 
     @property
     def chromosomes(self):

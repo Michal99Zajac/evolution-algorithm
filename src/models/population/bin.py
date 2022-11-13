@@ -20,6 +20,17 @@ class BinaryPopulation(Population):
         super().__init__(props, config)
         self._inversion = props["inversion"]
 
+    def _generate_valuers(self, subjects: List[BinarySubject]):
+        return [
+            ValuerBinarySubject(
+                subject,
+                self._config["left_limit"],
+                self._config["right_limit"],
+                self._config["fitness"],
+            )
+            for subject in subjects
+        ]
+
     def _generate(self):
         chromosome_lenght = BinaryChromosome.chromosome_lenght(
             self._config["precision"],
@@ -49,7 +60,6 @@ class BinaryPopulation(Population):
             for subject in self._subjects
         ]
         parents: List[BinarySubject] = self._selection.select(valuerSubjects)
-        self._subjects = parents  # assign to the next populaion
 
         # crossover
         while len(self._subjects) != self._amount:
@@ -75,41 +85,30 @@ class BinaryPopulation(Population):
             self._inversion.inverse(subject)
 
     def run(self, epochs: int):
+        valuers = self._generate_valuers(self._subjects)
+        the_best: ValuerBinarySubject = self._pick_the_best(valuers)
         evolution = [
             {
                 "epoch": 0,
-                "value": self._pick_the_best_value(
-                    [
-                        ValuerBinarySubject(
-                            subject,
-                            self._config["left_limit"],
-                            self._config["right_limit"],
-                            self._config["fitness"],
-                        )
-                        for subject in self._subjects
-                    ]
-                ),
+                "avg": self._avarage(valuers),
+                "x": the_best.values,
+                "value": the_best.value,
             }
         ]
 
         for epoch in range(1, epochs):
             self._evolve()
 
+            valuers = self._generate_valuers(self._subjects)
+            the_best: ValuerBinarySubject = self._pick_the_best(valuers)
+
             # set the data
             evolution.append(
                 {
                     "epoch": epoch,
-                    "value": self._pick_the_best_value(
-                        [
-                            ValuerBinarySubject(
-                                subject,
-                                self._config["left_limit"],
-                                self._config["right_limit"],
-                                self._config["fitness"],
-                            )
-                            for subject in self._subjects
-                        ]
-                    ),
+                    "x": the_best.values,
+                    "avg": self._avarage(valuers),
+                    "value": the_best.value,
                 }
             )
 
