@@ -1,4 +1,5 @@
 from typing import Type, List
+import time
 
 from models.chromosome import BinaryChromosome
 from models.subject import BinarySubject
@@ -88,6 +89,7 @@ class BinaryPopulation(Population):
         self._subjects.extend(kept)
 
     def run(self, epochs: int):
+        start_time = time.time()
         valuers = self._generate_valuers(self._subjects)
         the_best: ValuerBinarySubject = self._pick_the_best(valuers)
         evolution = [
@@ -115,4 +117,10 @@ class BinaryPopulation(Population):
                 }
             )
 
-        return evolution
+        end_time = time.time()
+
+        return {
+            "evolution": evolution,
+            "time": end_time - start_time,
+            "best": {"value": the_best.value, "xx": the_best.values},
+        }
