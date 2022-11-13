@@ -5,6 +5,7 @@ from processes.crossover.core import Crossover
 from processes.selection.core import Selection
 from processes.mutation.core import Mutation
 from models.valuer import Valuer
+from processes.elite import Eliter
 
 C = TypeVar("C")
 
@@ -15,6 +16,7 @@ class Props(TypedDict):
     crossover: Crossover
     mutation: Mutation
     selection: Selection
+    eliter: Eliter
 
 
 class Config(TypedDict):
@@ -32,6 +34,7 @@ class Population(ABC):
         self._mutation = props["mutation"]
         self._SubjectCreator = props["SubjectCreator"]
         self._selection = props["selection"]
+        self._eliter = props["eliter"]
         self._config = config
 
         # generate init population

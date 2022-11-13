@@ -18,6 +18,7 @@ from processes.selection.bin import (
     RouletteSelection,
     BinSelection,
 )
+from processes.elite import Eliter
 from models.population.bin import BinaryPopulation
 from processes.inversion import Inversion
 
@@ -81,6 +82,10 @@ class BinInversionConfig(BaseModel):
     probability: float = 0.3
 
 
+class EliteStrategy(BaseModel):
+    percentage: float = 0.1
+
+
 @app.post("/api/bin")
 def get_bin_calc(
     config: BinConfig,
@@ -88,6 +93,7 @@ def get_bin_calc(
     crossover_config: BinCrossoverConfig,
     mutation_config: BinMutationConfig,
     inversion_config: BinInversionConfig,
+    elite_config: EliteStrategy,
 ):
     # set fitness
     SubjectCreator = None
@@ -99,6 +105,9 @@ def get_bin_calc(
 
     if SubjectCreator == None or fitness == None:
         raise Exception("Error: SubjectCreator or fitness is not set")
+
+    # eliter
+    eliter = Eliter(elite_config.percentage, config.type)
 
     # set crossover
     crossover_factory = BinaryCrossoverFactory(crossover_config.type)
@@ -151,6 +160,7 @@ def get_bin_calc(
             "crossover": crossover,
             "mutation": mutation,
             "inversion": inversion,
+            "eliter": eliter,
         },
         {
             "fitness": fitness,

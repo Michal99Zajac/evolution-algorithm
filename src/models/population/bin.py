@@ -53,23 +53,28 @@ class BinaryPopulation(Population):
         valuerSubjects = self._generate_valuers(self._subjects)
         parents: List[BinarySubject] = self._selection.select(valuerSubjects)
 
+        if len(parents) < 2:
+            raise Exception("Error: selected less then 2 parents")
+
         # clear subjects (offsprings)
         self._subjects = []
 
+        # keep the best
+        kept: List[BinarySubject] = self._eliter.keep(valuerSubjects)
+
         # crossover
-        while len(self._subjects) != self._amount:
+        # subtract kept subjects
+        while len(self._subjects) - len(kept) < self._amount:
             index_one, index_two = two_index(len(parents) - 1)
             offsprings = self._crossover.cross(parents[index_one], parents[index_two])
 
             if not offsprings:
                 continue
 
-            # subjects amount is odd
-            if len(self._subjects) + 1 == self._amount:
-                self._subjects.append(offsprings[0])
-                continue
-
             self._subjects.extend(offsprings)
+
+        # cut unnecessary offsprings
+        self._subjects = self._subjects[0 : self._amount - len(kept)]
 
         # mutation
         for subject in self._subjects:
@@ -78,6 +83,9 @@ class BinaryPopulation(Population):
         # inversion
         for subject in self._subjects:
             self._inversion.inverse(subject)
+
+        # add kept subjects
+        self._subjects.extend(kept)
 
     def run(self, epochs: int):
         valuers = self._generate_valuers(self._subjects)
