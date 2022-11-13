@@ -51,11 +51,11 @@ class BinConfig(BaseModel):
     amount: int
     precision: int
     fitness: FitnessEnum
+    type: str
 
 
 class BinSelectionConfig(BaseModel):
-    selection: BinSelection
-    type: str
+    type: BinSelection
     percentage: float
     group_size: Union[int, None]
 
@@ -102,20 +102,18 @@ def get_bin_calc(
     # set selection
     selection = None
 
-    if selection_config.selection == BinSelection.THE_BEST:
-        selection = TheBestSelection(selection_config.percentage, selection_config.type)
-    elif selection_config.selection == BinSelection.ROULETTE:
-        selection = RouletteSelection(
-            selection_config.percentage, selection_config.type
-        )
-    elif selection_config.selection == BinSelection.TOURNAMENT:
+    if selection_config.type == BinSelection.THE_BEST:
+        selection = TheBestSelection(selection_config.percentage, config.type)
+    elif selection_config.type == BinSelection.ROULETTE:
+        selection = RouletteSelection(selection_config.percentage, config.type)
+    elif selection_config.type == BinSelection.TOURNAMENT:
         if not selection_config.group_size:
             raise Exception("Error: group_size is not provided")
 
         selection = TournamentSelection(
             selection_config.percentage,
             selection_config.group_size,
-            selection_config.type,
+            config.type,
         )
 
     if selection == None:
