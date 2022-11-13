@@ -22,6 +22,7 @@ class Config(TypedDict):
     left_limit: float
     right_limit: float
     precision: int
+    type: str
 
 
 class Population(ABC):
@@ -37,8 +38,12 @@ class Population(ABC):
         self._generate()
 
     def _pick_the_best_value(self, valuers: List[Valuer]):
-        # FIXME: add min/max param
-        return sorted(valuers, key=lambda valuer: valuer.value)[0].value
+        return sorted(
+            valuers,
+            key=lambda valuer: valuer.value
+            if self._config["type"] == "min"
+            else -valuer.value,
+        )[0].value
 
     @abstractmethod
     def _generate(self):

@@ -51,7 +51,7 @@ class BinConfig(BaseModel):
     amount: int
     precision: int
     fitness: FitnessEnum
-    type: str
+    type: str = "min"
 
 
 class BinSelectionConfig(BaseModel):
@@ -150,6 +150,7 @@ def get_bin_calc(
             "left_limit": config.left_limit,
             "right_limit": config.right_limit,
             "precision": config.precision,
+            "type": config.type,
         },
     )
 
