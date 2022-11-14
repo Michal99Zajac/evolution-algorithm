@@ -7,7 +7,7 @@ from models.subject.decorators import ValuerBinarySubject
 from processes.selection.core import Selection
 
 
-class BinSelection(Enum):
+class SelectionEnum(Enum):
     THE_BEST = "THE_BEST"
     TOURNAMENT = "TOURNAMENT"
     ROULETTE = "ROULETTE"

@@ -6,7 +6,7 @@ from models.subject.decimal import DecimalSubject
 from processes.mutation.core import Mutation
 
 
-class BinMutation(Enum):
+class DecimalMutationEnum(Enum):
     UNIFORM = "UNIFORM"
     GAUSS = "GAUSS"
 
@@ -32,7 +32,7 @@ class UniformMutation(DecimalMuatation):
         while self._is_overflow(new_value):
             new_value = random.uniform(self._left_limit, self._right_limit)
 
-        index = random.randint(0, len(subject.chromosome_number) - 1)
+        index = random.randint(0, subject.chromosome_number - 1)
         subject.chromosomes[index].mutate(new_value)
         return subject
 
