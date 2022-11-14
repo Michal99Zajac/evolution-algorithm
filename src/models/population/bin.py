@@ -1,7 +1,7 @@
 from typing import Type, List
 import time
 
-from models.chromosome import BinaryChromosome
+from models.chromosome.bin import BinaryChromosome
 from models.subject import BinarySubject
 from models.subject.decorators import ValuerBinarySubject
 from utils.two_index import two_index

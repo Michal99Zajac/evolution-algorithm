@@ -1,6 +1,6 @@
 import random
 from typing import Type, List, Tuple
-from models.chromosome import BinaryChromosome
+from models.chromosome.bin import BinaryChromosome
 
 from models.subject import BinarySubject
 from processes.crossover.core import Crossover

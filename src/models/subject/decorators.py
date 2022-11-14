@@ -1,5 +1,5 @@
 from typing import List
-from models.chromosome import BinaryChromosome
+from models.chromosome.bin import BinaryChromosome
 
 from models.subject import BinarySubject
 from models.valuer import Valuer

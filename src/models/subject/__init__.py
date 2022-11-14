@@ -2,7 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import List
 
-from models.chromosome import BinaryChromosome
+from models.chromosome.bin import BinaryChromosome
 
 
 class BinarySubject(ABC):
