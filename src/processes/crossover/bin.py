@@ -2,7 +2,7 @@ import random
 from typing import Type, List, Tuple
 from models.chromosome.bin import BinaryChromosome
 
-from models.subject import BinarySubject
+from models.subject.bin import BinarySubject
 from processes.crossover.core import Crossover
 
 

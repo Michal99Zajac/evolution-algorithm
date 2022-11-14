@@ -1,7 +1,7 @@
 from typing import List
 from models.chromosome.bin import BinaryChromosome
 
-from models.subject import BinarySubject
+from models.subject.bin import BinarySubject
 from models.valuer import Valuer
 from processes.mutation.core import Mutation
 

@@ -2,7 +2,7 @@ from typing import Type, List
 import time
 
 from models.chromosome.bin import BinaryChromosome
-from models.subject import BinarySubject
+from models.subject.bin import BinarySubject
 from models.subject.decorators import ValuerBinarySubject
 from utils.two_index import two_index
 from processes.inversion import Inversion

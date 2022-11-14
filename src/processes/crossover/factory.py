@@ -1,6 +1,6 @@
 from enum import Enum
 from typing import Type
-from models.subject import BinarySubject
+from models.subject.bin import BinarySubject
 
 from processes.crossover.bin import (
     HomogeneousCrossover,

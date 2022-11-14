@@ -1,7 +1,7 @@
 import random
 from enum import Enum
 
-from models.subject import BinarySubject
+from models.subject.bin import BinarySubject
 from processes.mutation.core import Mutation
 
 

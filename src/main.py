@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from typing import Union
 from fastapi.middleware.cors import CORSMiddleware
 
-from models.subject import X2Subject
+from models.subject.bin import X2Subject
 from processes.crossover.factory import BinaryCrossoverFactory, BinaryCrossoverType
 from processes.mutation.bin import (
     EdgeMutation,

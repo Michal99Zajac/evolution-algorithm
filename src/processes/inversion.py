@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TypeVar
 import random
 
-from models.subject import BinarySubject
+from models.subject.bin import BinarySubject
 from utils.two_index import two_index
 
 TInversion = TypeVar("TInversion", bound="Inversion")

@@ -3,7 +3,7 @@ import random
 from abc import ABC, abstractmethod
 from typing import Callable, TypeVar
 
-from models.subject import BinarySubject
+from models.subject.bin import BinarySubject
 
 TMutation = TypeVar("TMutation", bound="Mutation")
 T = TypeVar("T", BinarySubject, any)

@@ -3,7 +3,7 @@ from typing import Type, TypeVar
 from abc import ABC, abstractmethod
 import random
 
-from models.subject import BinarySubject
+from models.subject.bin import BinarySubject
 
 T = TypeVar("T", BinarySubject, any)
 TCrossover = TypeVar("TCrossover", bound="Crossover")
