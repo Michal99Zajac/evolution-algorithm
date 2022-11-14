@@ -6,6 +6,7 @@ h11==0.14.0
 httptools==0.5.0
 idna==3.4
 mypy-extensions==0.4.3
+numpy==1.23.4
 pathspec==0.10.1
 platformdirs==2.5.3
 pydantic==1.10.2

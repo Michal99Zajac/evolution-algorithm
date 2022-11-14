@@ -18,6 +18,10 @@ class DecimalSubject:
     def chromosomes(self):
         return self._chromosomes
 
+    @chromosomes.setter
+    def chromosomes(self, chromosomes: List[DecimalChromosome]):
+        self._chromosomes = chromosomes
+
     def mutate(self, *values: float):
         if len(values) != len(self._chromosomes):
             raise Exception("Error: too few or too much values were provided")

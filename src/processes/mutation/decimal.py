@@ -1,5 +1,6 @@
 import random
 from enum import Enum
+import numpy as np
 
 from models.subject.decimal import DecimalSubject
 from processes.mutation.core import Mutation
@@ -33,4 +34,24 @@ class UniformMutation(DecimalMuatation):
 
         index = random.randint(0, len(subject.chromosome_number) - 1)
         subject.chromosomes[index].mutate(new_value)
+        return subject
+
+
+class GaussMutation(DecimalMuatation):
+    @Mutation.checker
+    def mutate(self, subject: DecimalSubject):
+        [chromosome_x, chromosome_y] = subject.chromosomes
+
+        saved_x_value = chromosome_x.value
+        saved_y_value = chromosome_y.value
+
+        chromosome_x.mutate(saved_x_value + np.random.normal(0, 1))
+        chromosome_y.mutate(saved_y_value + np.random.normal(0, 1))
+
+        while self._is_overflow(chromosome_x.value) or self._is_overflow(
+            chromosome_y.value
+        ):
+            chromosome_x.mutate(saved_x_value + np.random.normal(0, 1))
+            chromosome_y.mutate(saved_y_value + np.random.normal(0, 1))
+
         return subject
