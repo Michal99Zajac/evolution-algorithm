@@ -1,11 +1,10 @@
 from __future__ import annotations
-from abc import ABC, abstractmethod
 from typing import List
 
 from models.chromosome.bin import BinaryChromosome
 
 
-class BinarySubject(ABC):
+class BinarySubject:
     chromosome_number = 0
 
     def __init__(self, chromosomes: List[BinaryChromosome], length: int):
@@ -26,13 +25,13 @@ class BinarySubject(ABC):
     def chromosomes(self):
         return self._chromosomes
 
-    @abstractmethod
     def inverse(self, left: int, right: int):
-        pass
+        for chromosome in self._chromosomes:
+            chromosome.inverse(left=left, right=right)
 
-    @abstractmethod
     def mutate(self, *args: int):
-        pass
+        for chromosome in self._chromosomes:
+            chromosome.mutate(*args)
 
 
 class X2Subject(BinarySubject):
@@ -42,11 +41,3 @@ class X2Subject(BinarySubject):
         if len(chromosomes) != self.chromosome_number:
             raise Exception("Error: constructor didn't get two chromosomes")
         super().__init__(chromosomes, length)
-
-    def inverse(self, left: int, right: int):
-        for chromosome in self._chromosomes:
-            chromosome.inverse(left=left, right=right)
-
-    def mutate(self, *args: int):
-        for chromosome in self._chromosomes:
-            chromosome.mutate(*args)

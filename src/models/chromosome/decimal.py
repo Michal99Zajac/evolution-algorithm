@@ -4,8 +4,10 @@ import random
 
 
 class DecimalChromosome:
-    def __init__(self, value: float):
+    def __init__(self, value: float, left_limit: float, right_limit: float):
         self._value = value
+        self._left_limit = left_limit
+        self._right_limit = right_limit
 
     def mutate(self, value: float):
         self._value = value
@@ -21,4 +23,4 @@ class DecimalChromosome:
     @staticmethod
     def generate(left_limit: float, right_limit: float):
         value = random.uniform(left_limit, right_limit)
-        return DecimalChromosome(value)
+        return DecimalChromosome(value, left_limit, right_limit)
