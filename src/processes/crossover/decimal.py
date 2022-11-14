@@ -13,7 +13,11 @@ class DecimalCrossover(Crossover):
 
 class ArithmeticCrossover(DecimalCrossover):
     def __init__(
-        self, probability: float, k: float, left_limit: float, right_limit: float
+        self,
+        probability: float,
+        left_limit: float,
+        right_limit: float,
+        k: float,
     ):
         super().__init__(probability, left_limit, right_limit)
         self._k = k
