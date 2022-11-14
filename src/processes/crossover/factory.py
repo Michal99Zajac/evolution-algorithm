@@ -8,6 +8,13 @@ from processes.crossover.bin import (
     TwoPointCrossover,
     ThreePointCrossover,
 )
+from processes.crossover.decimal import (
+    ArithmeticCrossover,
+    AveragingCrossover,
+    BlendCrossoverAlpha,
+    BlendCrossoverAlphaBeta,
+    LinearCrossover,
+)
 from processes.crossover.core import CrossoverFactory
 
 
@@ -34,3 +41,41 @@ class BinaryCrossoverFactory(CrossoverFactory):
     # make as generic
     def create_crossover(self, SubjectCreator: Type[BinarySubject], probability: float):
         return self.CrossoverCreator(SubjectCreator, probability)
+
+
+class DecimalCrossoverType(Enum):
+    ARITHMETIC = "ARITHMETIC"
+    BLEND_ALPHA = "BLEND_ALPHA"
+    BLEND_ALPHA_BETA = "BLEND_ALPHA_BETA"
+    AVERAGING = "AVERAGING"
+    LINEAR = "LINEAR"
+
+
+class DecimalCrossoverFactory(CrossoverFactory):
+    def __init__(self, type: DecimalCrossoverType):
+        if type == DecimalCrossoverType.ARITHMETIC:
+            self.CrossoverCreator = ArithmeticCrossover
+        elif type == DecimalCrossoverType.AVERAGING:
+            self.CrossoverCreator = AveragingCrossover
+        elif type == DecimalCrossoverType.BLEND_ALPHA:
+            self.CrossoverCreator = BlendCrossoverAlpha
+        elif type == DecimalCrossoverType.BLEND_ALPHA_BETA:
+            self.CrossoverCreator = BlendCrossoverAlphaBeta
+        elif type == DecimalCrossoverType.LINEAR:
+            self.CrossoverCreator = LinearCrossover
+        else:
+            raise Exception("Error: type doesnt exist")
+
+    def create_crossover(
+        self, probability: float, left_limit, right_limit, k, alpha, beta, fitness, type
+    ):
+        return self.CrossoverCreator(
+            probability,
+            left_limit=left_limit,
+            right_limit=right_limit,
+            k=k,
+            alpha=alpha,
+            beta=beta,
+            fitness=fitness,
+            type=type,
+        )
