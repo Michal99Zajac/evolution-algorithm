@@ -8,17 +8,10 @@ from models.chromosome.decimal import DecimalChromosome
 class DecimalSubject:
     chromosome_number = 1
 
-    def __init__(
-        self,
-        chromosomes: List[DecimalChromosome],
-        left_limit: float,
-        right_limit: float,
-    ):
+    def __init__(self, chromosomes: List[DecimalChromosome]):
         if len(chromosomes) == 0:
             raise Exception("Error: Subject has to have at least on chromosome")
 
-        self._left_limit = left_limit
-        self._rigt_limit = right_limit
         self._chromosomes = chromosomes
 
     @property
@@ -36,12 +29,7 @@ class DecimalSubject:
 class X2__DecimalSubject(DecimalSubject):
     chromosome_number = 2
 
-    def __init__(
-        self,
-        chromosomes: List[DecimalChromosome],
-        left_limit: float,
-        right_limit: float,
-    ):
+    def __init__(self, chromosomes: List[DecimalChromosome]):
         if len(chromosomes) != self.chromosome_number:
             raise Exception("Error: constructor didn't get two chromosomes")
-        super().__init__(chromosomes, left_limit, right_limit)
+        super().__init__(chromosomes)
