@@ -33,9 +33,11 @@ class DecimalCrossover(Crossover):
 
     def _check_overflow(self, subjects: List[X2__DecimalSubject]):
         return any(
-            self._left_limit > self._estimate(subject)
-            or self._estimate(subject) > self._right_limit
-            for subject in subjects
+            [
+                self._left_limit > self._estimate(subject)
+                or self._estimate(subject) > self._right_limit
+                for subject in subjects
+            ]
         )
 
 
@@ -106,7 +108,7 @@ class BlendCrossoverAlpha(DecimalCrossover):
         [x2, y2] = parent_B.chromosomes
 
         d1 = abs(x1.value - x2.value)
-        d2 = abs(y1.value, y2.value)
+        d2 = abs(y1.value - y2.value)
 
         x__new_lb = min([x1.value, x2.value]) - self._alpha * d1
         x__new_rb = max([x1.value, x2.value]) + self._alpha * d1
@@ -141,7 +143,7 @@ class BlendCrossoverAlphaBeta(DecimalCrossover):
         [x2, y2] = parent_B.chromosomes
 
         d1 = abs(x1.value - x2.value)
-        d2 = abs(y1.value, y2.value)
+        d2 = abs(y1.value - y2.value)
 
         x__new_lb = min([x1.value, x2.value]) - self._alpha * d1
         x__new_rb = max([x1.value, x2.value]) + self._alpha * d1

@@ -4,14 +4,64 @@ from models.chromosome.decimal import DecimalChromosome
 from models.subject.decimal import X2__DecimalSubject
 from models.subject.decorators import ValuerDecimalSubject
 from fitness.schaffer_N4 import schaffer_N4
-from processes.crossover.decimal import ArithmeticCrossover, LinearCrossover
+from processes.crossover.decimal import (
+    ArithmeticCrossover,
+    LinearCrossover,
+    AveragingCrossover,
+    BlendCrossoverAlpha,
+    BlendCrossoverAlphaBeta,
+)
 
 # crossover
 # crossover = ArithmeticCrossover(
-#     1, left_limit=-10, right_limit=10, k=0.5, fitness=schaffer_N4
+#     1,
+#     left_limit=-10,
+#     right_limit=10,
+#     k=0.5,
+#     fitness=schaffer_N4,
+#     type="min",
+#     alpha=0.25,
+#     beta=0.5,
 # )
-crossover = LinearCrossover(
-    1, left_limit=-10, right_limit=10, k=0.5, fitness=schaffer_N4, type="min"
+# crossover = LinearCrossover(
+#     1,
+#     left_limit=-10,
+#     right_limit=10,
+#     k=0.5,
+#     fitness=schaffer_N4,
+#     type="min",
+#     alpha=1,
+#     beta=1,
+# )
+# crossover = AveragingCrossover(
+#     1,
+#     left_limit=-10,
+#     right_limit=10,
+#     k=0.5,
+#     fitness=schaffer_N4,
+#     type="min",
+#     alpha=0.25,
+#     beta=0.5,
+# )
+# crossover = BlendCrossoverAlpha(
+#     1,
+#     left_limit=-10,
+#     right_limit=10,
+#     k=0.5,
+#     fitness=schaffer_N4,
+#     type="min",
+#     alpha=1,
+#     beta=1,
+# )
+crossover = BlendCrossoverAlphaBeta(
+    1,
+    left_limit=-10,
+    right_limit=10,
+    k=0.5,
+    fitness=schaffer_N4,
+    type="min",
+    alpha=0,
+    beta=1,
 )
 
 chromosomes_a = [
@@ -31,4 +81,4 @@ subjectValuer_b = ValuerDecimalSubject(subject_b, -10, 10, schaffer_N4)
 
 offsprings: List[X2__DecimalSubject] = crossover.cross(subject_a, subject_b)
 
-print(offsprings[0])
+print(offsprings)
