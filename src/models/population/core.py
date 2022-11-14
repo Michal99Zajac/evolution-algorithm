@@ -22,7 +22,6 @@ class Config(TypedDict):
     fitness: Any
     left_limit: float
     right_limit: float
-    precision: int
     type: str
 
 

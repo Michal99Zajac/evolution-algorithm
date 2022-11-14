@@ -1,32 +1,21 @@
-from typing import Type, List
+from typing import List
 import time
 
-from models.chromosome.bin import BinaryChromosome
-from models.subject.bin import BinarySubject
-from models.subject.decorators import ValuerBinarySubject
+from models.chromosome.decimal import DecimalChromosome
+from models.subject.decimal import X2__DecimalSubject
+from models.subject.decorators import ValuerDecimalSubject
 from utils.two_index import two_index
-from processes.inversion import Inversion
-from models.subject.bin import X2Subject
 
 from .core import Population, Props, Config
 
 
-class BinaryProps(Props):
-    inversion: Inversion
-
-
-class BinaryConfig(Config):
-    precision: int
-
-
-class BinaryPopulation(Population):
-    def __init__(self, props: BinaryProps, config: BinaryConfig):
+class DecimalPopulation(Population):
+    def __init__(self, props: Props, config: Config):
         super().__init__(props, config)
-        self._inversion = props["inversion"]
 
-    def _generate_valuers(self, subjects: List[BinarySubject]):
+    def _generate_valuers(self, subjects: List[X2__DecimalSubject]):
         return [
-            ValuerBinarySubject(
+            ValuerDecimalSubject(
                 subject,
                 self._config["left_limit"],
                 self._config["right_limit"],
@@ -36,18 +25,14 @@ class BinaryPopulation(Population):
         ]
 
     def _generate(self):
-        chromosome_lenght = BinaryChromosome.chromosome_lenght(
-            self._config["precision"],
-            self._config["left_limit"],
-            self._config["right_limit"],
-        )
         self._subjects = [
-            X2Subject(
+            X2__DecimalSubject(
                 [
-                    BinaryChromosome.generate(chromosome_lenght)
-                    for _ in range(X2Subject.chromosome_number)
-                ],
-                length=chromosome_lenght,
+                    DecimalChromosome.generate(
+                        self._config["left_limit"], self._config["right_limit"]
+                    )
+                    for _ in range(X2__DecimalSubject.chromosome_number)
+                ]
             )
             for _ in range(self._amount)
         ]
@@ -55,7 +40,7 @@ class BinaryPopulation(Population):
     def _evolve(self):
         # selection
         valuerSubjects = self._generate_valuers(self._subjects)
-        parents: List[BinarySubject] = self._selection.select(valuerSubjects)
+        parents: List[X2__DecimalSubject] = self._selection.select(valuerSubjects)
 
         if len(parents) < 2:
             raise Exception("Error: selected less then 2 parents")
@@ -64,7 +49,7 @@ class BinaryPopulation(Population):
         self._subjects = []
 
         # keep the best
-        kept: List[BinarySubject] = self._eliter.keep(valuerSubjects)
+        kept: List[X2__DecimalSubject] = self._eliter.keep(valuerSubjects)
 
         # crossover
         # subtract kept subjects
@@ -84,17 +69,13 @@ class BinaryPopulation(Population):
         for subject in self._subjects:
             self._mutation.mutate(subject)
 
-        # inversion
-        for subject in self._subjects:
-            self._inversion.inverse(subject)
-
         # add kept subjects
         self._subjects.extend(kept)
 
     def run(self, epochs: int):
         start_time = time.time()
         valuers = self._generate_valuers(self._subjects)
-        the_best: ValuerBinarySubject = self._pick_the_best(valuers)
+        the_best: ValuerDecimalSubject = self._pick_the_best(valuers)
         evolution = [
             {
                 "epoch": 0,
@@ -108,7 +89,7 @@ class BinaryPopulation(Population):
             self._evolve()
 
             valuers = self._generate_valuers(self._subjects)
-            the_best: ValuerBinarySubject = self._pick_the_best(valuers)
+            the_best: ValuerDecimalSubject = self._pick_the_best(valuers)
 
             # set the data
             evolution.append(
