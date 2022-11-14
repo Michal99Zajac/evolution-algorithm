@@ -167,3 +167,27 @@ class BlendCrossoverAlphaBeta(DecimalCrossover):
             return None
 
         return offsprings
+
+
+class AveragingCrossover(DecimalCrossover):
+    @Crossover.checker
+    def cross(self, parent_A: X2__DecimalSubject, parent_B: X2__DecimalSubject):
+        [x1, y1] = parent_A.chromosomes
+        [x2, y2] = parent_B.chromosomes
+
+        x__new = DecimalChromosome((x1.value + x2.value) / 2)
+        y__new = DecimalChromosome((y1.value + y2.value) / 2)
+
+        offsprings = [
+            X2__DecimalSubject(
+                [
+                    x__new,
+                    y__new,
+                ]
+            )
+        ]
+
+        if self._check_overflow(offsprings):
+            return None
+
+        return offsprings
