@@ -1,4 +1,5 @@
 from typing import List
+import random
 
 from models.subject.decimal import X2__DecimalSubject
 from models.chromosome.decimal import DecimalChromosome
@@ -13,6 +14,8 @@ class DecimalCrossover(Crossover):
         left_limit: float = -10,
         right_limit: float = 10,
         k: float = 0.5,
+        alpha: float = 0.25,
+        beta: float = 0.5,
         fitness=None,
         type="min",
     ):
@@ -20,6 +23,8 @@ class DecimalCrossover(Crossover):
         self._left_limit = left_limit
         self._right_limit = right_limit
         self._k = k
+        self._alpha = alpha
+        self._beta = beta
         self._fitness = fitness
         self._type = type
 
@@ -90,5 +95,75 @@ class LinearCrossover(DecimalCrossover):
         offsprings = sorted(
             raw_offsprings, key=min_sorter if self._type == "min" else max_sorter
         )[0:2]
+
+        return offsprings
+
+
+class BlendCrossoverAlpha(DecimalCrossover):
+    @Crossover.checker
+    def cross(self, parent_A: X2__DecimalSubject, parent_B: X2__DecimalSubject):
+        [x1, y1] = parent_A.chromosomes
+        [x2, y2] = parent_B.chromosomes
+
+        d1 = abs(x1.value - x2.value)
+        d2 = abs(y1.value, y2.value)
+
+        x__new_lb = min([x1.value, x2.value]) - self._alpha * d1
+        x__new_rb = max([x1.value, x2.value]) + self._alpha * d1
+        y__new_lb = min([y1.value, y2.value]) - self._alpha * d2
+        y__new_rb = max([y1.value, y2.value]) + self._alpha * d2
+
+        offsprings = [
+            X2__DecimalSubject(
+                [
+                    DecimalChromosome(random.uniform(x__new_lb, x__new_rb)),
+                    DecimalChromosome(random.uniform(y__new_lb, y__new_rb)),
+                ]
+            ),
+            X2__DecimalSubject(
+                [
+                    DecimalChromosome(random.uniform(x__new_lb, x__new_rb)),
+                    DecimalChromosome(random.uniform(y__new_lb, y__new_rb)),
+                ]
+            ),
+        ]
+
+        if self._check_overflow(offsprings):
+            return None
+
+        return offsprings
+
+
+class BlendCrossoverAlphaBeta(DecimalCrossover):
+    @Crossover.checker
+    def cross(self, parent_A: X2__DecimalSubject, parent_B: X2__DecimalSubject):
+        [x1, y1] = parent_A.chromosomes
+        [x2, y2] = parent_B.chromosomes
+
+        d1 = abs(x1.value - x2.value)
+        d2 = abs(y1.value, y2.value)
+
+        x__new_lb = min([x1.value, x2.value]) - self._alpha * d1
+        x__new_rb = max([x1.value, x2.value]) + self._alpha * d1
+        y__new_lb = min([y1.value, y2.value]) - self._beta * d2
+        y__new_rb = max([y1.value, y2.value]) + self._beta * d2
+
+        offsprings = [
+            X2__DecimalSubject(
+                [
+                    DecimalChromosome(random.uniform(x__new_lb, x__new_rb)),
+                    DecimalChromosome(random.uniform(y__new_lb, y__new_rb)),
+                ]
+            ),
+            X2__DecimalSubject(
+                [
+                    DecimalChromosome(random.uniform(x__new_lb, x__new_rb)),
+                    DecimalChromosome(random.uniform(y__new_lb, y__new_rb)),
+                ]
+            ),
+        ]
+
+        if self._check_overflow(offsprings):
+            return None
 
         return offsprings
