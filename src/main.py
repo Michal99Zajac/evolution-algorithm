@@ -96,15 +96,13 @@ def get_bin_calc(
     elite_config: EliteStrategy,
 ):
     # set fitness
-    SubjectCreator = None
     fitness = None
 
     if config.fitness == FitnessEnum.SCHAFFER_N4:
-        SubjectCreator = X2Subject
         fitness = schaffer_N4
 
-    if SubjectCreator == None or fitness == None:
-        raise Exception("Error: SubjectCreator or fitness is not set")
+    if fitness == None:
+        raise Exception("Error: fitness is not set")
 
     # eliter
     eliter = Eliter(elite_config.percentage, config.type)
@@ -112,7 +110,7 @@ def get_bin_calc(
     # set crossover
     crossover_factory = BinaryCrossoverFactory(crossover_config.type)
     crossover = crossover_factory.create_crossover(
-        SubjectCreator, crossover_config.probability
+        X2Subject, crossover_config.probability
     )
 
     # set selection
@@ -155,7 +153,6 @@ def get_bin_calc(
     population = BinaryPopulation(
         {
             "amount": config.amount,
-            "SubjectCreator": SubjectCreator,
             "selection": selection,
             "crossover": crossover,
             "mutation": mutation,

@@ -6,6 +6,7 @@ from models.subject.bin import BinarySubject
 from models.subject.decorators import ValuerBinarySubject
 from utils.two_index import two_index
 from processes.inversion import Inversion
+from models.subject.bin import X2Subject
 
 from .core import Population, Props, Config
 
@@ -15,8 +16,6 @@ class BinaryProps(Props):
 
 
 class BinaryPopulation(Population):
-    _SubjectCreator: Type[BinarySubject]
-
     def __init__(self, props: BinaryProps, config: Config):
         super().__init__(props, config)
         self._inversion = props["inversion"]
@@ -39,10 +38,10 @@ class BinaryPopulation(Population):
             self._config["right_limit"],
         )
         self._subjects = [
-            self._SubjectCreator(
+            X2Subject(
                 [
                     BinaryChromosome.generate(chromosome_lenght)
-                    for _ in range(self._SubjectCreator.chromosome_number)
+                    for _ in range(X2Subject.chromosome_number)
                 ],
                 length=chromosome_lenght,
             )

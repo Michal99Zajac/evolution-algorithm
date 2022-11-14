@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar, Type, List, TypedDict, Any
+from typing import TypeVar, List, TypedDict, Any
 
 from processes.crossover.core import Crossover
 from processes.selection.core import Selection
@@ -12,7 +12,6 @@ C = TypeVar("C")
 
 class Props(TypedDict):
     amount: int
-    SubjectCreator: Type[C]
     crossover: Crossover
     mutation: Mutation
     selection: Selection
@@ -32,7 +31,6 @@ class Population(ABC):
         self._amount = props["amount"]
         self._crossover = props["crossover"]
         self._mutation = props["mutation"]
-        self._SubjectCreator = props["SubjectCreator"]
         self._selection = props["selection"]
         self._eliter = props["eliter"]
         self._config = config
