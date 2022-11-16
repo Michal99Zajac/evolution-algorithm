@@ -46,13 +46,13 @@ class Population(ABC):
             else -valuer.value,
         )[0]
 
-    def _avarage(self, valuers: List[Valuer]):
-        avarage = sum(map(lambda valuer: valuer.value, valuers)) / len(valuers)
+    def _average(self, valuers: List[Valuer]):
+        average = sum(map(lambda valuer: valuer.value, valuers)) / len(valuers)
         standard_deviation = math.sqrt(
-            sum([(valuer.value - avarage) ** 2 for valuer in valuers]) / len(valuers)
+            sum([(valuer.value - average) ** 2 for valuer in valuers]) / len(valuers)
         )
 
-        return avarage, standard_deviation
+        return average, standard_deviation
 
     @abstractmethod
     def _generate(self):

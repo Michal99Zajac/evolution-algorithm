@@ -95,11 +95,11 @@ class BinaryPopulation(Population):
         start_time = time.time()
         valuers = self._generate_valuers(self._subjects)
         the_best: ValuerBinarySubject = self._pick_the_best(valuers)
-        avarage, standard_deviation = self._avarage(valuers)
+        average, standard_deviation = self._average(valuers)
         evolution = [
             {
                 "epoch": 0,
-                "average": avarage,
+                "average": average,
                 "x": the_best.values,
                 "value": the_best.value,
                 "standard_deviation": standard_deviation,
@@ -113,12 +113,12 @@ class BinaryPopulation(Population):
             the_best: ValuerBinarySubject = self._pick_the_best(valuers)
 
             # set the data
-            avarage, standard_deviation = self._avarage(valuers)
+            average, standard_deviation = self._average(valuers)
             evolution.append(
                 {
                     "epoch": epoch,
                     "x": the_best.values,
-                    "average": avarage,
+                    "average": average,
                     "value": the_best.value,
                     "standard_deviation": standard_deviation,
                 }
