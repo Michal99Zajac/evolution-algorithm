@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import TypeVar, List, TypedDict, Any
+import math
 
 from processes.crossover.core import Crossover
 from processes.selection.core import Selection
@@ -46,7 +47,12 @@ class Population(ABC):
         )[0]
 
     def _avarage(self, valuers: List[Valuer]):
-        return sum(map(lambda valuer: valuer.value, valuers)) / len(valuers)
+        avarage = sum(map(lambda valuer: valuer.value, valuers)) / len(valuers)
+        standard_deviation = math.sqrt(
+            sum([(valuer.value - avarage) ** 2 for valuer in valuers]) / len(valuers)
+        )
+
+        return avarage, standard_deviation
 
     @abstractmethod
     def _generate(self):
