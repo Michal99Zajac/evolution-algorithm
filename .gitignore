@@ -148,3 +148,7 @@ dmypy.json
 
 # IDE
 .vscode
+
+# meta
+meta/*.png
+meta/*.txt
