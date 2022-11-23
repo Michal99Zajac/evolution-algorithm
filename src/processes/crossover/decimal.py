@@ -32,13 +32,14 @@ class DecimalCrossover(Crossover):
         return self._fitness(*[chromosome.value for chromosome in subject.chromosomes])
 
     def _check_overflow(self, subjects: List[X2__DecimalSubject]):
-        return any(
-            [
-                self._left_limit > self._estimate(subject)
-                or self._estimate(subject) > self._right_limit
-                for subject in subjects
-            ]
-        )
+        def check(subject: X2__DecimalSubject):
+            [x1, x2] = subject.chromosomes
+
+            return not (self._left_limit <= x1.value <= self._right_limit) or not (
+                self._left_limit <= x2.value <= self._right_limit
+            )
+
+        return any([check(subject) for subject in subjects])
 
 
 class ArithmeticCrossover(DecimalCrossover):
