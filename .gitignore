@@ -152,3 +152,5 @@ dmypy.json
 # meta
 meta/*.png
 meta/*.txt
+
+.python-version
